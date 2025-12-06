@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { auth } from '../../auth';
 import {
   jsonResponse,
   errorResponse,
   getFileUrl,
   getDownloadUrl,
+  getAuthenticatedUser,
 } from '../../lib/api-helpers';
 import { uploadFile, generateStorageKey } from '../../lib/storage';
 import {
@@ -22,19 +22,18 @@ export const Route = createFileRoute('/api/files/upload')({
        * POST /api/files/upload
        * Upload a file with optional metadata
        * Expects multipart/form-data with 'file' field
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       POST: async ({ request }) => {
         try {
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
-          if (!session?.user) {
+          if (!user) {
             return errorResponse('Not authenticated', 401, 'Unauthorized');
           }
 
-          const userId = session.user.id;
+          const userId = user.id;
 
           // Parse multipart form data
           const formData = await request.formData();

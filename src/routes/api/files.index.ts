@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { auth } from '../../auth';
 import {
   jsonResponse,
   errorResponse,
   getFileUrl,
   getDownloadUrl,
+  getAuthenticatedUser,
 } from '../../lib/api-helpers';
 import { fileQuerySchema } from '../../schemas/file.schema';
 import type { Prisma } from '../../generated/prisma/client';
@@ -16,19 +16,18 @@ export const Route = createFileRoute('/api/files/')({
       /**
        * GET /api/files
        * List files for the authenticated user with filtering, sorting, and pagination
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       GET: async ({ request }) => {
         try {
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
-          if (!session?.user) {
+          if (!user) {
             return errorResponse('Not authenticated', 401, 'Unauthorized');
           }
 
-          const userId = session.user.id;
+          const userId = user.id;
 
           // Parse query parameters
           const url = new URL(request.url);
