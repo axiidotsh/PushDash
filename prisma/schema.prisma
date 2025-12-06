@@ -18,6 +18,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  files         File[]
 
   @@unique([email])
   @@map("user")
@@ -69,4 +70,65 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// ============================================
+// File Storage Models
+// ============================================
+
+model File {
+  id           String      @id @default(cuid())
+  filename     String      // Sanitized filename for storage
+  originalName String      // Original filename from upload
+  mimeType     String      // MIME type (e.g., "text/plain", "image/png")
+  size         Int         // File size in bytes
+  storageKey   String      // S3 object key
+  tag          String?     // Optional user-defined tag
+  message      String?     // Optional description/message
+  isPublic     Boolean     @default(false)
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shareLinks   ShareLink[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([userId, createdAt])
+  @@index([tag])
+  @@map("file")
+}
+
+model ShareLink {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  fileId    String
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([fileId])
+  @@map("share_link")
+}
+
+// ============================================
+// CLI Authentication Models
+// ============================================
+
+enum CliAuthStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+model CliAuthRequest {
+  id        String        @id @default(cuid())
+  code      String        @unique // Short code shown in CLI
+  token     String?       // Session token populated after browser auth
+  userId    String?       // User ID after successful auth
+  status    CliAuthStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+
+  @@index([code])
+  @@map("cli_auth_request")
 }

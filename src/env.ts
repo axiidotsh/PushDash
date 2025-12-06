@@ -25,6 +25,17 @@ const envSchema = z.object({
       'BETTER_AUTH_SECRET must contain only letters and numbers'
     ),
   APP_URL: z.string().url('APP_URL must be a valid URL'),
+
+  // GitHub OAuth
+  GITHUB_CLIENT_ID: z.string().min(1, 'GITHUB_CLIENT_ID is required'),
+  GITHUB_CLIENT_SECRET: z.string().min(1, 'GITHUB_CLIENT_SECRET is required'),
+
+  // S3-compatible storage
+  S3_BUCKET: z.string().min(1, 'S3_BUCKET is required'),
+  S3_REGION: z.string().default('us-east-1'),
+  S3_ACCESS_KEY_ID: z.string().min(1, 'S3_ACCESS_KEY_ID is required'),
+  S3_SECRET_ACCESS_KEY: z.string().min(1, 'S3_SECRET_ACCESS_KEY is required'),
+  S3_ENDPOINT: z.string().url().optional(), // Optional custom endpoint for Railway/other S3-compatible services
 });
 
 /**
