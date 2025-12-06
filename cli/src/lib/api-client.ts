@@ -8,6 +8,8 @@ import type {
   LoginResponse,
   UploadResponse,
   FileListResponse,
+  FileDeleteResponse,
+  FileListOptions,
   PollResponse,
 } from '../types/index.js';
 
@@ -97,10 +99,25 @@ export class ApiClient {
     return response.data;
   }
 
-  async listFiles(limit = 10): Promise<FileListResponse> {
-    const response = await this.client.get(API_ENDPOINTS.FILE_LIST, {
-      params: { limit },
-    });
+  async listFiles(options: FileListOptions = {}): Promise<FileListResponse> {
+    const params: Record<string, string | number | boolean> = {};
+
+    if (options.limit) params.limit = options.limit;
+    if (options.page) params.page = options.page;
+    if (options.sortBy) params.sortBy = options.sortBy;
+    if (options.sortOrder) params.sortOrder = options.sortOrder;
+    if (options.search) params.search = options.search;
+    if (options.tag) params.tag = options.tag;
+    if (options.isPublic !== undefined) params.isPublic = options.isPublic;
+
+    const response = await this.client.get(API_ENDPOINTS.FILE_LIST, { params });
+    return response.data;
+  }
+
+  async deleteFile(fileId: string): Promise<FileDeleteResponse> {
+    const response = await this.client.delete(
+      API_ENDPOINTS.FILE_DELETE(fileId)
+    );
     return response.data;
   }
 
