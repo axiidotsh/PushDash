@@ -1,66 +1,78 @@
 'use client';
 
-import { Link } from '@tanstack/react-router';
-import { Upload, LayoutDashboard } from 'lucide-react';
+import { Link, useRouterState } from '@tanstack/react-router';
+import { LayoutDashboard } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from '@/components/ui/sidebar';
 import { UserMenu } from './user-menu';
 
 interface AppShellProps {
   children: React.ReactNode;
 }
 
+const navItems = [
+  {
+    title: 'Dashboard',
+    to: '/dashboard' as const,
+    icon: LayoutDashboard,
+  },
+];
+
 export function AppShell({ children }: AppShellProps) {
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+
   return (
-    <div className="bg-background flex min-h-screen flex-col">
-      <header className="bg-background/80 sticky top-0 z-50 border-b backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-lg">
-              <Upload className="text-primary-foreground h-4 w-4" />
-            </div>
-            <span className="text-foreground text-base font-semibold">
-              PushDash
-            </span>
+    <SidebarProvider defaultOpen={true}>
+      <Sidebar collapsible="none" className="h-screen border-r">
+        <SidebarHeader className="border-b px-4 py-4">
+          <Link to="/" className="text-foreground text-base font-medium">
+            PushDash
           </Link>
+        </SidebarHeader>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            <NavLink to="/dashboard" icon={LayoutDashboard}>
-              Dashboard
-            </NavLink>
-          </nav>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navItems.map((item) => {
+                  const isActive = currentPath.startsWith(item.to);
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild isActive={isActive}>
+                        <Link to={item.to}>
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
+        <SidebarFooter className="border-t">
           <UserMenu />
-        </div>
-      </header>
+        </SidebarFooter>
+      </Sidebar>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6">{children}</main>
-    </div>
-  );
-}
-
-interface NavLinkProps {
-  to: '/dashboard';
-  icon: React.ComponentType<{ className?: string }>;
-  children: React.ReactNode;
-}
-
-function NavLink({ to, icon: Icon, children }: NavLinkProps) {
-  const isActive =
-    typeof window !== 'undefined' && window.location.pathname.startsWith(to);
-
-  return (
-    <Link
-      to={to}
-      className={cn(
-        'flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
-        isActive
-          ? 'bg-accent text-accent-foreground'
-          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-      )}
-    >
-      <Icon className="h-4 w-4" />
-      {children}
-    </Link>
+      <SidebarInset>
+        <main className="flex-1 overflow-auto p-6">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
