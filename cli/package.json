@@ -1,0 +1,45 @@
+{
+  "name": "pushdash",
+  "private": false,
+  "version": "0.1.0",
+  "description": "CLI tool to push files directly from terminal to PushDash cloud dashboard",
+  "type": "module",
+  "bin": {
+    "pushdash": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "cli",
+    "file-upload",
+    "cloud",
+    "terminal"
+  ],
+  "author": "CarboxyDev",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "ora": "^8.2.0",
+    "prompts": "^2.4.2",
+    "axios": "^1.7.9",
+    "form-data": "^4.0.1",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/prompts": "^2.4.9",
+    "tsup": "^8.5.0",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
