@@ -19,7 +19,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-export function SignInForm() {
+interface SignInFormProps {
+  redirectTo?: string;
+}
+
+export function SignInForm({ redirectTo }: SignInFormProps) {
   const navigate = useNavigate();
   const signIn = useSignIn();
 
@@ -37,7 +41,13 @@ export function SignInForm() {
       toast.success('Welcome back!', {
         description: 'You have been signed in successfully',
       });
-      navigate({ to: '/' });
+
+      // Redirect to specified URL or home
+      if (redirectTo) {
+        window.location.href = redirectTo;
+      } else {
+        navigate({ to: '/' });
+      }
     } catch (error) {
       toast.error('Sign in failed', {
         description:
@@ -45,6 +55,9 @@ export function SignInForm() {
       });
     }
   };
+
+  // Build sign-up link with redirect if present
+  const signUpSearch = redirectTo ? { redirect: redirectTo } : undefined;
 
   return (
     <Form {...form}>
@@ -90,7 +103,11 @@ export function SignInForm() {
 
         <p className="text-muted-foreground text-center text-sm">
           Don&apos;t have an account?{' '}
-          <Link to="/sign-up" className="text-primary hover:underline">
+          <Link
+            to="/sign-up"
+            search={signUpSearch}
+            className="text-primary hover:underline"
+          >
             Sign up
           </Link>
         </p>

@@ -1,7 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { auth } from '../../auth';
-import { jsonResponse, errorResponse } from '../../lib/api-helpers';
+import {
+  jsonResponse,
+  errorResponse,
+  getAuthenticatedUser,
+} from '../../lib/api-helpers';
 
 export const Route = createFileRoute('/api/user/me')({
   server: {
@@ -9,30 +12,29 @@ export const Route = createFileRoute('/api/user/me')({
       /**
        * GET /api/user/me
        * Get the current authenticated user's information
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       GET: async ({ request }) => {
         try {
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
-          if (!session?.user) {
+          if (!user) {
             return errorResponse('Not authenticated', 401, 'Unauthorized');
           }
 
           // Get file count for the user
           const filesCount = await prisma.file.count({
-            where: { userId: session.user.id },
+            where: { userId: user.id },
           });
 
           return jsonResponse({
             user: {
-              id: session.user.id,
-              email: session.user.email,
-              name: session.user.name,
-              image: session.user.image,
-              emailVerified: session.user.emailVerified,
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              emailVerified: user.emailVerified,
               filesCount,
             },
           });
