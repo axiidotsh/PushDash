@@ -1,11 +1,11 @@
 'use client';
 
+import { useMemo } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useFiles } from '@/hooks/use-files';
+import { useFiles, extractTagsFromFiles } from '@/hooks/use-files';
 import { useFileFilters } from '@/hooks/use-file-filters';
 import { FileList, FilterBar } from '@/components/dashboard';
-import { getAllTags } from '@/lib/mock-data';
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashboardPage,
@@ -25,10 +25,12 @@ function DashboardPage() {
   } = useFileFilters();
 
   const { data, isLoading } = useFiles(queryParams);
-  const availableTags = getAllTags();
 
   const files = data?.files ?? [];
   const total = data?.total ?? 0;
+
+  // Derive available tags from the fetched files
+  const availableTags = useMemo(() => extractTagsFromFiles(files), [files]);
 
   return (
     <div className="space-y-4">
