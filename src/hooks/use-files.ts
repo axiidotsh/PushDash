@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import type { File, FileListParams, FileListResponse } from '@/types/file';
+import { getFileType } from '@/types/file';
 import { mockFiles } from '@/lib/mock-data';
 
 export const filesQueryKey = ['files'] as const;
@@ -38,6 +39,24 @@ function filterAndSortFiles(
     filtered = filtered.filter((f) =>
       params.tags!.some((tag) => f.tags.includes(tag))
     );
+  }
+
+  if (params?.fileType) {
+    filtered = filtered.filter(
+      (f) => getFileType(f.mimeType) === params.fileType
+    );
+  }
+
+  if (params?.dateFrom) {
+    filtered = filtered.filter(
+      (f) => new Date(f.uploadedAt) >= params.dateFrom!
+    );
+  }
+
+  if (params?.dateTo) {
+    const endOfDay = new Date(params.dateTo);
+    endOfDay.setHours(23, 59, 59, 999);
+    filtered = filtered.filter((f) => new Date(f.uploadedAt) <= endOfDay);
   }
 
   const sortBy = params?.sortBy || 'uploadedAt';

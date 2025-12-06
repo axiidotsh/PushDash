@@ -212,3 +212,14 @@ export const MOCK_USER_ID = 'user_mock_12345';
  * Pre-generated mock files for consistent development experience
  */
 export const mockFiles = generateMockFiles(MOCK_USER_ID, 12);
+
+/**
+ * Get all unique tags from mock files
+ */
+export function getAllTags(): string[] {
+  const tagSet = new Set<string>();
+  mockFiles.forEach((file) => {
+    file.tags.forEach((tag) => tagSet.add(tag));
+  });
+  return Array.from(tagSet).sort();
+}

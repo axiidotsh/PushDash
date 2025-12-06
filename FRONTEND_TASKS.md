@@ -61,29 +61,29 @@
 
 ---
 
-## Phase 3: Filtering, Sorting & Search
+## Phase 3: Filtering, Sorting & Search ✅
 
 ### Types & Data
 
-- [ ] Create `FileFilters` type
-- [ ] Create `FileSortOption` type
+- [x] Create `FileFilters` type
+- [x] Create `FileSortOption` type (implemented as `FileSortField` and `FileSortOrder`)
 
 ### React Query Hooks
 
-- [ ] Update `useFiles` hook to accept filter, sort, and search params
+- [x] Update `useFiles` hook to accept filter, sort, and search params
 
 ### Components
 
-- [ ] Create filter bar component
-- [ ] Create date filter component
-- [ ] Create file type filter component
-- [ ] Create tag filter component
-- [ ] Create sort controls component
-- [ ] Create search input component
+- [x] Create filter bar component
+- [x] Create date filter component (integrated in FilterBar)
+- [x] Create file type filter component (integrated in FilterBar)
+- [x] Create tag filter component (integrated in FilterBar)
+- [x] Create sort controls component (integrated in FilterBar)
+- [x] Create search input component (integrated in FilterBar)
 
 ### State Management
 
-- [ ] Create filter state hook
+- [x] Create filter state hook
 
 ---
 
