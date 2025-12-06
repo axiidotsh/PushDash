@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { auth } from '../../auth';
-import { errorResponse } from '../../lib/api-helpers';
+import { errorResponse, getAuthenticatedUser } from '../../lib/api-helpers';
 import { getFile } from '../../lib/storage';
 
 export const Route = createFileRoute('/api/files/$id/download')({
@@ -10,15 +9,14 @@ export const Route = createFileRoute('/api/files/$id/download')({
       /**
        * GET /api/files/:id/download
        * Download a file
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       GET: async ({ request, params }) => {
         try {
           const { id } = params;
 
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
           // Find the file
           const file = await prisma.file.findUnique({
@@ -30,7 +28,7 @@ export const Route = createFileRoute('/api/files/$id/download')({
           }
 
           // Check access permissions
-          const isOwner = session?.user?.id === file.userId;
+          const isOwner = user?.id === file.userId;
           const isPublic = file.isPublic;
 
           if (!isOwner && !isPublic) {
