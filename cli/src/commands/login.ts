@@ -5,8 +5,13 @@ export function createLoginCommand(): Command {
   const command = new Command('login');
 
   command.description('Authenticate with PushDash').action(async () => {
-    const authManager = new AuthManager();
-    await authManager.login();
+    try {
+      const authManager = new AuthManager();
+      await authManager.login();
+    } catch {
+      // Error already logged by AuthManager, just exit
+      process.exit(1);
+    }
   });
 
   return command;

@@ -108,6 +108,8 @@ export class ApiClient {
   static handleError(error: unknown): string {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError<{ message?: string }>;
+
+      // Handle response errors first
       if (axiosError.response?.data?.message) {
         return axiosError.response.data.message;
       }
@@ -117,11 +119,48 @@ export class ApiClient {
       if (axiosError.response?.status === 403) {
         return 'Access forbidden';
       }
-      if (axiosError.code === 'ECONNREFUSED') {
-        return 'Cannot connect to PushDash API. Please check your internet connection.';
+      if (axiosError.response?.status === 404) {
+        return 'Resource not found';
       }
-      return axiosError.message;
+      if (axiosError.response?.status && axiosError.response.status >= 500) {
+        return 'Server error. Please try again later.';
+      }
+
+      // Handle network errors
+      const networkErrors: Record<string, string> = {
+        ENOTFOUND:
+          'Cannot resolve PushDash server. Please check your internet connection.',
+        ECONNREFUSED:
+          'Cannot connect to PushDash server. The service may be temporarily unavailable.',
+        ECONNRESET: 'Connection was reset. Please try again.',
+        ETIMEDOUT:
+          'Connection timed out. Please check your internet connection.',
+        ENETUNREACH:
+          'Network is unreachable. Please check your internet connection.',
+        ECONNABORTED: 'Request was aborted. Please try again.',
+        ERR_NETWORK: 'Network error. Please check your internet connection.',
+      };
+
+      if (axiosError.code && networkErrors[axiosError.code]) {
+        return networkErrors[axiosError.code];
+      }
+
+      // For timeout errors
+      if (
+        axiosError.code === 'ECONNABORTED' &&
+        axiosError.message.includes('timeout')
+      ) {
+        return 'Request timed out. Please try again.';
+      }
+
+      return axiosError.message || 'An unexpected network error occurred';
     }
+
+    // Handle non-Axios errors
+    if (error instanceof Error) {
+      return error.message;
+    }
+
     return 'An unexpected error occurred';
   }
 }

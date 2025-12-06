@@ -14,10 +14,9 @@ export class AuthManager {
   }
 
   async login(): Promise<void> {
-    try {
-      // Initiate login flow
-      const spinner = Logger.spinner('Initiating login...');
+    let spinner = Logger.spinner('Initiating login...');
 
+    try {
       const { loginUrl, deviceCode } = await this.apiClient.initiateLogin();
 
       spinner.succeed('Login initiated');
@@ -29,7 +28,7 @@ export class AuthManager {
       await open(loginUrl);
 
       // Poll for authentication
-      const pollSpinner = Logger.spinner('Waiting for authentication...');
+      spinner = Logger.spinner('Waiting for authentication...');
 
       const maxAttempts = 60; // 5 minutes (60 attempts * 5 seconds)
       let attempts = 0;
@@ -48,7 +47,7 @@ export class AuthManager {
 
           if (result.status === 'completed' && result.token && result.user) {
             // Login successful
-            pollSpinner.succeed('Authentication successful');
+            spinner.succeed('Authentication successful');
 
             // Save token and user info
             await this.saveLoginData(result as LoginResponse);
@@ -59,16 +58,21 @@ export class AuthManager {
 
           // Unknown status, continue polling
           attempts++;
-        } catch (error) {
+        } catch {
           attempts++;
           if (attempts >= maxAttempts) {
-            pollSpinner.fail('Authentication timeout');
+            spinner.fail('Authentication timeout');
             throw new Error('Login timeout. Please try again.');
           }
           // Continue polling
         }
       }
+
+      // Max attempts reached without success
+      spinner.fail('Authentication timeout');
+      throw new Error('Login timeout. Please try again.');
     } catch (error) {
+      spinner.fail('Login failed');
       const errorMessage = ApiClient.handleError(error);
       Logger.error(errorMessage);
       throw error;
