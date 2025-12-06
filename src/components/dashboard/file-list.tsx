@@ -10,7 +10,6 @@ import {
   Globe,
   MoreHorizontal,
   Download,
-  Share2,
   Trash2,
 } from 'lucide-react';
 
@@ -43,7 +42,6 @@ interface FileListProps {
   searchQuery?: string;
   onPreview?: (file: File) => void;
   onDownload?: (file: File) => void;
-  onShare?: (file: File) => void;
   onDelete?: (file: File) => void;
   onClearFilters?: () => void;
 }
@@ -63,7 +61,6 @@ export function FileList({
   searchQuery,
   onPreview,
   onDownload,
-  onShare,
   onDelete,
   onClearFilters,
 }: FileListProps) {
@@ -189,13 +186,6 @@ export function FileList({
                       >
                         <Download className="mr-2 h-4 w-4" />
                         Download
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onShare?.(file)}
-                        className="cursor-pointer"
-                      >
-                        <Share2 className="mr-2 h-4 w-4" />
-                        Share
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
