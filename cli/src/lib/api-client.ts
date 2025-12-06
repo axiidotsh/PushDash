@@ -8,6 +8,7 @@ import type {
   LoginResponse,
   UploadResponse,
   FileListResponse,
+  PollResponse,
 } from '../types/index.js';
 
 export class ApiClient {
@@ -40,7 +41,7 @@ export class ApiClient {
     return response.data;
   }
 
-  async pollLogin(deviceCode: string): Promise<LoginResponse> {
+  async pollLogin(deviceCode: string): Promise<PollResponse> {
     const response = await this.client.post(API_ENDPOINTS.LOGIN_POLL, {
       deviceCode,
     });

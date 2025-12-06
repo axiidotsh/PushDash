@@ -4,6 +4,7 @@ import { join } from 'path';
 export const API_BASE_URL = 'https://pushdash.axii.xyz';
 
 export const API_ENDPOINTS = {
+  HEALTH: '/api/health',
   LOGIN_INIT: '/api/auth/cli/init',
   LOGIN_POLL: '/api/auth/cli/poll',
   LOGOUT: '/api/auth/logout',

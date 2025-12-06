@@ -30,6 +30,19 @@ export interface LoginResponse {
   user: User;
 }
 
+export interface PollPendingResponse {
+  status: 'pending';
+  message: string;
+}
+
+export interface PollCompletedResponse {
+  status: 'completed';
+  token: string;
+  user: User;
+}
+
+export type PollResponse = PollPendingResponse | PollCompletedResponse;
+
 export interface UploadResponse {
   file: UploadedFile;
 }
