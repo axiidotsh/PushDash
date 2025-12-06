@@ -6,6 +6,8 @@ import { createLoginCommand } from './commands/login.js';
 import { createLogoutCommand } from './commands/logout.js';
 import { createPushCommand } from './commands/push.js';
 import { createWhoamiCommand } from './commands/whoami.js';
+import { createListCommand } from './commands/list.js';
+import { createDeleteCommand } from './commands/delete.js';
 
 // Get package.json version
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +28,8 @@ program.addCommand(createLoginCommand());
 program.addCommand(createLogoutCommand());
 program.addCommand(createPushCommand());
 program.addCommand(createWhoamiCommand());
+program.addCommand(createListCommand());
+program.addCommand(createDeleteCommand());
 
 // Parse arguments
 program.parse(process.argv);

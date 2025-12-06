@@ -110,24 +110,31 @@ export function getBearerToken(request: Request): string | null {
 }
 
 /**
- * Generate the public URL for a file
+ * Generate the frontend URL for a file (file detail page)
  */
 export function getFileUrl(fileId: string): string {
-  return `${env.APP_URL}/api/files/${fileId}`;
+  return `${env.APP_URL}/dashboard/files/${fileId}`;
 }
 
 /**
- * Generate the share URL for a file
+ * Generate the frontend share URL for a file (public share page)
  */
 export function getShareUrl(shareToken: string): string {
   return `${env.APP_URL}/share/${shareToken}`;
 }
 
 /**
- * Generate the download URL for a file
+ * Generate the download URL for a file (API endpoint for direct download)
  */
 export function getDownloadUrl(fileId: string): string {
   return `${env.APP_URL}/api/files/${fileId}/download`;
+}
+
+/**
+ * Generate the API URL for a file (for programmatic access)
+ */
+export function getFileApiUrl(fileId: string): string {
+  return `${env.APP_URL}/api/files/${fileId}`;
 }
 
 /**

@@ -11,6 +11,8 @@ export const API_ENDPOINTS = {
   USER_ME: '/api/user/me',
   FILE_UPLOAD: '/api/files/upload',
   FILE_LIST: '/api/files',
+  FILE_DELETE: (id: string) => `/api/files/${id}`,
+  FILE_GET: (id: string) => `/api/files/${id}`,
 } as const;
 
 export const CONFIG_DIR = join(homedir(), '.pushdash');

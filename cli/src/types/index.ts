@@ -50,4 +50,26 @@ export interface UploadResponse {
 export interface FileListResponse {
   files: UploadedFile[];
   total: number;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
+  };
+}
+
+export interface FileDeleteResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface FileListOptions {
+  limit?: number;
+  page?: number;
+  sortBy?: 'createdAt' | 'filename' | 'size';
+  sortOrder?: 'asc' | 'desc';
+  search?: string;
+  tag?: string;
+  isPublic?: boolean;
 }
