@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from '@tanstack/react-router';
-import { User, LogOut, ChevronsUpDown } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 
 import { useSession, useSignOut } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,41 +16,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar';
 
 export function UserMenu() {
   const { data: session, isLoading } = useSession();
   const signOut = useSignOut();
 
   if (isLoading) {
-    return (
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <div className="flex w-full items-center gap-2 p-2">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <div className="flex flex-1 flex-col gap-1">
-              <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-2 w-28" />
-            </div>
-          </div>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    );
+    return <Skeleton className="h-8 w-8 rounded-full" />;
   }
 
   if (!session) {
     return (
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <Button asChild size="sm" className="w-full">
-            <Link to="/sign-in">Sign in</Link>
-          </Button>
-        </SidebarMenuItem>
-      </SidebarMenu>
+      <Button asChild size="sm">
+        <Link to="/sign-in">Sign in</Link>
+      </Button>
     );
   }
 
@@ -68,61 +47,47 @@ export function UserMenu() {
   };
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 border">
-                <AvatarImage src={user.image || undefined} alt={user.name} />
-                <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto h-4 w-4" />
-            </SidebarMenuButton>
-          </DropdownMenuTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="focus-visible:ring-ring rounded-full transition-colors hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none">
+          <Avatar className="h-8 w-8 border">
+            <AvatarImage src={user.image || undefined} alt={user.name} />
+            <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+          </Avatar>
+        </button>
+      </DropdownMenuTrigger>
 
-          <DropdownMenuContent
-            align="end"
-            side="top"
-            sideOffset={8}
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56"
-          >
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-muted-foreground text-xs">{user.email}</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link to="/dashboard">
-                  <User className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleSignOut}
-              disabled={signOut.isPending}
-              className="text-destructive focus:text-destructive cursor-pointer"
-            >
-              <LogOut className="text-destructive mr-2 h-4 w-4" />
-              {signOut.isPending ? 'Signing out...' : 'Sign out'}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+      <DropdownMenuContent
+        align="end"
+        side="bottom"
+        sideOffset={8}
+        className="min-w-56"
+      >
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium">{user.name}</p>
+            <p className="text-muted-foreground text-xs">{user.email}</p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link to="/dashboard">
+              <User className="mr-2 h-4 w-4" />
+              Dashboard
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleSignOut}
+          disabled={signOut.isPending}
+          className="text-destructive focus:text-destructive cursor-pointer"
+        >
+          <LogOut className="text-destructive mr-2 h-4 w-4" />
+          {signOut.isPending ? 'Signing out...' : 'Sign out'}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
