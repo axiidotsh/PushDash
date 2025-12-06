@@ -31,6 +31,7 @@ import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth.logout'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiShareTokenDownloadRouteImport } from './routes/api/share.$token.download'
+import { Route as ApiFilesIdSharesRouteImport } from './routes/api/files.$id.shares'
 import { Route as ApiFilesIdShareRouteImport } from './routes/api/files.$id.share'
 import { Route as ApiFilesIdDownloadRouteImport } from './routes/api/files.$id.download'
 import { Route as ApiAuthCliPollRouteImport } from './routes/api/auth.cli.poll'
@@ -146,6 +147,11 @@ const ApiShareTokenDownloadRoute = ApiShareTokenDownloadRouteImport.update({
   path: '/download',
   getParentRoute: () => ApiShareTokenRoute,
 } as any)
+const ApiFilesIdSharesRoute = ApiFilesIdSharesRouteImport.update({
+  id: '/shares',
+  path: '/shares',
+  getParentRoute: () => ApiFilesIdRoute,
+} as any)
 const ApiFilesIdShareRoute = ApiFilesIdShareRouteImport.update({
   id: '/share',
   path: '/share',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesByTo {
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesById {
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRouteTypes {
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   id:
     | '__root__'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   fileRoutesById: FileRoutesById
 }
@@ -523,6 +535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiShareTokenDownloadRouteImport
       parentRoute: typeof ApiShareTokenRoute
     }
+    '/api/files/$id/shares': {
+      id: '/api/files/$id/shares'
+      path: '/shares'
+      fullPath: '/api/files/$id/shares'
+      preLoaderRoute: typeof ApiFilesIdSharesRouteImport
+      parentRoute: typeof ApiFilesIdRoute
+    }
     '/api/files/$id/share': {
       id: '/api/files/$id/share'
       path: '/share'
@@ -590,11 +609,13 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 interface ApiFilesIdRouteChildren {
   ApiFilesIdDownloadRoute: typeof ApiFilesIdDownloadRoute
   ApiFilesIdShareRoute: typeof ApiFilesIdShareRoute
+  ApiFilesIdSharesRoute: typeof ApiFilesIdSharesRoute
 }
 
 const ApiFilesIdRouteChildren: ApiFilesIdRouteChildren = {
   ApiFilesIdDownloadRoute: ApiFilesIdDownloadRoute,
   ApiFilesIdShareRoute: ApiFilesIdShareRoute,
+  ApiFilesIdSharesRoute: ApiFilesIdSharesRoute,
 }
 
 const ApiFilesIdRouteWithChildren = ApiFilesIdRoute._addFileChildren(

@@ -88,6 +88,7 @@ model File {
   userId       String
   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   shareLinks   ShareLink[]
+  shares       FileShare[] // Users who have been granted access
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -107,6 +108,21 @@ model ShareLink {
   @@index([token])
   @@index([fileId])
   @@map("share_link")
+}
+
+// Tracks which users have been granted access to a file
+model FileShare {
+  id        String   @id @default(cuid())
+  fileId    String
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  email     String   // Email of the person granted access
+  sharedBy  String   // User ID of who shared it
+  createdAt DateTime @default(now())
+
+  @@unique([fileId, email]) // Can't share same file with same email twice
+  @@index([fileId])
+  @@index([email])
+  @@map("file_share")
 }
 
 // ============================================

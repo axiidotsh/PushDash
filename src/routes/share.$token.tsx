@@ -13,6 +13,9 @@ import {
   Copy,
   Check,
   ArrowRight,
+  Lock,
+  LogIn,
+  ShieldX,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -27,22 +30,30 @@ export const Route = createFileRoute('/share/$token')({
 
 interface SharedFileData {
   id: string;
-  filename: string;
+  filename?: string;
   originalName: string;
-  mimeType: string;
-  size: number;
-  tag: string | null;
-  message: string | null;
+  mimeType?: string;
+  size?: number;
+  tag?: string | null;
+  message?: string | null;
   isPublic: boolean;
-  url: string;
-  downloadUrl: string;
-  shareUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  url?: string;
+  downloadUrl?: string;
+  shareUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
   owner: {
-    id: string;
+    id?: string;
     name: string | null;
   };
+}
+
+interface ShareResponse {
+  file: SharedFileData;
+  accessGranted: boolean;
+  requiresAuth?: boolean;
+  accessReason?: string;
+  message?: string;
 }
 
 const fileTypeIcons = {
@@ -65,11 +76,13 @@ function SharePage() {
         const err = await res.json();
         throw new Error(err.message || 'Share link not found or expired');
       }
-      return res.json() as Promise<{ file: SharedFileData }>;
+      return res.json() as Promise<ShareResponse>;
     },
   });
 
   const file = data?.file;
+  const accessGranted = data?.accessGranted ?? false;
+  const requiresAuth = data?.requiresAuth ?? false;
 
   const handleCopyLink = async () => {
     const url = window.location.href;
@@ -124,7 +137,76 @@ function SharePage() {
     );
   }
 
-  const fileType = getFileType(file.mimeType);
+  // Handle login required state
+  if (requiresAuth) {
+    return (
+      <div className="bg-background flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardContent className="py-12">
+            <div className="bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+              <Lock className="text-primary h-8 w-8" />
+            </div>
+            <h1 className="mb-2 text-xl font-semibold">Private File</h1>
+            <p className="text-muted-foreground mb-2 text-sm">
+              <span className="font-medium">{file.originalName}</span>
+            </p>
+            <p className="text-muted-foreground mb-6 text-sm">
+              {file.owner.name
+                ? `Shared by ${file.owner.name}`
+                : 'This file requires authentication to access.'}
+            </p>
+            <p className="text-muted-foreground mb-6 text-sm">
+              Sign in with the email address this file was shared with.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Button asChild>
+                <Link to="/sign-in" search={{ redirect: `/share/${token}` }}>
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Sign in to access
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/sign-up" search={{ redirect: `/share/${token}` }}>
+                  Create an account
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Handle access denied state (user is logged in but doesn't have access)
+  if (!accessGranted) {
+    return (
+      <div className="bg-background flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center">
+          <CardContent className="py-12">
+            <div className="bg-destructive/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+              <ShieldX className="text-destructive h-8 w-8" />
+            </div>
+            <h1 className="mb-2 text-xl font-semibold">Access Denied</h1>
+            <p className="text-muted-foreground mb-2 text-sm">
+              <span className="font-medium">{file.originalName}</span>
+            </p>
+            <p className="text-muted-foreground mb-6 text-sm">
+              You don't have permission to access this file. Ask the owner to
+              share it with your email address.
+            </p>
+            <Button asChild>
+              <Link to="/dashboard">
+                Go to Dashboard
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const fileType = getFileType(file.mimeType || 'application/octet-stream');
   const Icon = fileTypeIcons[fileType];
 
   return (
@@ -147,13 +229,15 @@ function SharePage() {
             </div>
             <CardTitle className="text-2xl">{file.originalName}</CardTitle>
             <div className="text-muted-foreground flex items-center justify-center gap-3 text-sm">
-              <span>{formatFileSize(file.size)}</span>
-              <span>•</span>
-              <span>
-                {formatDistanceToNow(new Date(file.createdAt), {
-                  addSuffix: true,
-                })}
-              </span>
+              {file.size && <span>{formatFileSize(file.size)}</span>}
+              {file.size && file.createdAt && <span>•</span>}
+              {file.createdAt && (
+                <span>
+                  {formatDistanceToNow(new Date(file.createdAt), {
+                    addSuffix: true,
+                  })}
+                </span>
+              )}
               {file.owner.name && (
                 <>
                   <span>•</span>

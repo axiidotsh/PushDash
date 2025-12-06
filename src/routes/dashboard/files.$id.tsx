@@ -1,7 +1,7 @@
 'use client';
 
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import {
   ArrowLeft,
@@ -16,6 +16,11 @@ import {
   Copy,
   Check,
   ExternalLink,
+  Share2,
+  UserPlus,
+  X,
+  Link2,
+  Mail,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,6 +28,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { getFileType, formatFileSize } from '@/types/file';
 
 export const Route = createFileRoute('/dashboard/files/$id')({
@@ -46,6 +53,12 @@ interface FileData {
   isOwner: boolean;
 }
 
+interface ShareData {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
 const fileTypeIcons = {
   text: FileText,
   image: ImageIcon,
@@ -56,8 +69,13 @@ const fileTypeIcons = {
 
 function FileDetailPage() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
+  const [shareLinkCopied, setShareLinkCopied] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
+  const [emailError, setEmailError] = useState('');
 
+  // Fetch file data
   const { data, isLoading, error } = useQuery({
     queryKey: ['file', id],
     queryFn: async () => {
@@ -70,7 +88,71 @@ function FileDetailPage() {
     },
   });
 
+  // Fetch shares
+  const { data: sharesData } = useQuery({
+    queryKey: ['file-shares', id],
+    queryFn: async () => {
+      const res = await fetch(`/api/files/${id}/shares`);
+      if (!res.ok) return { shares: [], total: 0 };
+      return res.json() as Promise<{ shares: ShareData[]; total: number }>;
+    },
+    enabled: !!data?.file?.isOwner,
+  });
+
+  // Create share link mutation
+  const createShareLinkMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`/api/files/${id}/share`, { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to create share link');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['file', id] });
+    },
+  });
+
+  // Add email share mutation
+  const addShareMutation = useMutation({
+    mutationFn: async (emails: string[]) => {
+      const res = await fetch(`/api/files/${id}/shares`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emails }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to share');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['file-shares', id] });
+      setEmailInput('');
+      setEmailError('');
+    },
+    onError: (err: Error) => {
+      setEmailError(err.message);
+    },
+  });
+
+  // Remove email share mutation
+  const removeShareMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const res = await fetch(`/api/files/${id}/shares`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error('Failed to remove share');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['file-shares', id] });
+    },
+  });
+
   const file = data?.file;
+  const shares = sharesData?.shares ?? [];
 
   const handleCopyLink = async () => {
     if (!file) return;
@@ -80,9 +162,35 @@ function FileDetailPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyShareLink = async () => {
+    if (!file?.shareUrl) return;
+    await navigator.clipboard.writeText(file.shareUrl);
+    setShareLinkCopied(true);
+    setTimeout(() => setShareLinkCopied(false), 2000);
+  };
+
   const handleDownload = () => {
     if (!file) return;
     window.open(file.downloadUrl, '_blank');
+  };
+
+  const handleAddEmail = () => {
+    if (!emailInput.trim()) return;
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emails = emailInput
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean);
+
+    const invalidEmails = emails.filter((e) => !emailRegex.test(e));
+    if (invalidEmails.length > 0) {
+      setEmailError(`Invalid email: ${invalidEmails[0]}`);
+      return;
+    }
+
+    addShareMutation.mutate(emails);
   };
 
   if (error) {
@@ -236,22 +344,6 @@ function FileDetailPage() {
                   </>
                 )}
               </Button>
-              {file.shareUrl && (
-                <Button
-                  variant="outline"
-                  className="w-full justify-start"
-                  asChild
-                >
-                  <a
-                    href={file.shareUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Open share link
-                  </a>
-                </Button>
-              )}
               {file.isOwner && (
                 <Button variant="destructive" className="w-full justify-start">
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -260,6 +352,156 @@ function FileDetailPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Sharing - Only for owners */}
+          {file.isOwner && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Share2 className="h-4 w-4" />
+                  Sharing
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Share Link */}
+                <div>
+                  <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
+                    Share Link
+                  </label>
+                  {file.shareUrl ? (
+                    <div className="flex gap-2">
+                      <Input
+                        value={file.shareUrl}
+                        readOnly
+                        className="text-xs"
+                      />
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={handleCopyShareLink}
+                      >
+                        {shareLinkCopied ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button size="icon" variant="outline" asChild>
+                        <a
+                          href={file.shareUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => createShareLinkMutation.mutate()}
+                      disabled={createShareLinkMutation.isPending}
+                    >
+                      <Link2 className="mr-2 h-4 w-4" />
+                      {createShareLinkMutation.isPending
+                        ? 'Creating...'
+                        : 'Generate share link'}
+                    </Button>
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Email Sharing - Only for private files */}
+                {!file.isPublic && (
+                  <div>
+                    <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
+                      Share with People
+                    </label>
+                    <p className="text-muted-foreground mb-3 text-xs">
+                      Add email addresses to give specific people access to this
+                      private file.
+                    </p>
+                    <div className="flex gap-2">
+                      <Input
+                        type="email"
+                        placeholder="Enter email address"
+                        value={emailInput}
+                        onChange={(e) => {
+                          setEmailInput(e.target.value);
+                          setEmailError('');
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddEmail();
+                          }
+                        }}
+                        className="text-sm"
+                      />
+                      <Button
+                        size="icon"
+                        onClick={handleAddEmail}
+                        disabled={
+                          addShareMutation.isPending || !emailInput.trim()
+                        }
+                      >
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {emailError && (
+                      <p className="text-destructive mt-1 text-xs">
+                        {emailError}
+                      </p>
+                    )}
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      Tip: Separate multiple emails with commas
+                    </p>
+
+                    {/* List of shared emails */}
+                    {shares.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <div className="text-muted-foreground text-xs font-medium">
+                          Shared with {shares.length}{' '}
+                          {shares.length === 1 ? 'person' : 'people'}
+                        </div>
+                        {shares.map((share) => (
+                          <div
+                            key={share.id}
+                            className="bg-muted/50 flex items-center justify-between rounded-md px-3 py-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <Mail className="text-muted-foreground h-3 w-3" />
+                              <span className="text-sm">{share.email}</span>
+                            </div>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-6 w-6"
+                              onClick={() =>
+                                removeShareMutation.mutate(share.email)
+                              }
+                              disabled={removeShareMutation.isPending}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {file.isPublic && (
+                  <p className="text-muted-foreground text-xs">
+                    This file is public. Anyone with the share link can access
+                    it.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Details */}
           <Card>
