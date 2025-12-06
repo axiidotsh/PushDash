@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as CliAuthRouteImport } from './routes/cli.auth'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiFilesIndexRouteImport } from './routes/api/files.index'
@@ -25,6 +26,7 @@ import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth.sign-up'
 import { Route as ApiAuthSignOutRouteImport } from './routes/api/auth.sign-out'
 import { Route as ApiAuthSignInRouteImport } from './routes/api/auth.sign-in'
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth.logout'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiShareTokenDownloadRouteImport } from './routes/api/share.$token.download'
 import { Route as ApiFilesIdShareRouteImport } from './routes/api/files.$id.share'
@@ -55,6 +57,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const CliAuthRoute = CliAuthRouteImport.update({
   id: '/cli/auth',
   path: '/cli/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
@@ -112,6 +119,11 @@ const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   path: '/api/auth/session',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -153,9 +165,11 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute
@@ -176,9 +190,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
+  '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute
@@ -202,9 +218,11 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
+  '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/session': typeof ApiAuthSessionRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute
@@ -228,9 +246,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sign-in'
     | '/sign-up'
+    | '/api/health'
     | '/cli/auth'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/api/auth/logout'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
@@ -251,9 +271,11 @@ export interface FileRouteTypes {
     | '/'
     | '/sign-in'
     | '/sign-up'
+    | '/api/health'
     | '/cli/auth'
     | '/dashboard'
     | '/api/auth/$'
+    | '/api/auth/logout'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
@@ -276,9 +298,11 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
+    | '/api/health'
     | '/cli/auth'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/api/auth/logout'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
@@ -300,8 +324,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   DashboardRoute: typeof DashboardRouteWithChildren
+  ApiHealthRoute: typeof ApiHealthRoute
   CliAuthRoute: typeof CliAuthRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
   ApiAuthSignInRoute: typeof ApiAuthSignInRoute
   ApiAuthSignOutRoute: typeof ApiAuthSignOutRoute
@@ -351,6 +377,13 @@ declare module '@tanstack/react-router' {
       path: '/cli/auth'
       fullPath: '/cli/auth'
       preLoaderRoute: typeof CliAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/sign-up': {
@@ -428,6 +461,13 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/session'
       fullPath: '/api/auth/session'
       preLoaderRoute: typeof ApiAuthSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -536,8 +576,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   DashboardRoute: DashboardRouteWithChildren,
+  ApiHealthRoute: ApiHealthRoute,
   CliAuthRoute: CliAuthRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiAuthSignInRoute: ApiAuthSignInRoute,
   ApiAuthSignOutRoute: ApiAuthSignOutRoute,
