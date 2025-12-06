@@ -1,28 +1,29 @@
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@/generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not set');
+}
+
+const adapter = new PrismaPg({
+  connectionString,
+});
+
+const prisma = new PrismaClient({
+  adapter,
+});
 
 async function main() {
-  console.log('🌱 Starting seed...');
+  console.log('Seeding database...');
 
-  // Add your seed data here
-  // Example:
-  // const user = await prisma.user.create({
-  //   data: {
-  //     id: 'seed-user-1',
-  //     name: 'Test User',
-  //     email: 'test@example.com',
-  //     emailVerified: true,
-  //   },
-  // });
-  // console.log('Created user:', user.email);
-
-  console.log('✅ Seed completed!');
+  console.log('Database seeded successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('Database seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {

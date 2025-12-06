@@ -9,18 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
-import { Route as IndexRouteImport } from './routes/index';
 import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth.sign-up';
 import { Route as ApiAuthSignOutRouteImport } from './routes/api/auth.sign-out';
 import { Route as ApiAuthSignInRouteImport } from './routes/api/auth.sign-in';
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session';
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$';
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any);
 const ApiAuthSignUpRoute = ApiAuthSignUpRouteImport.update({
   id: '/api/auth/sign-up',
   path: '/api/auth/sign-up',
@@ -48,7 +42,6 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
@@ -56,7 +49,6 @@ export interface FileRoutesByFullPath {
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
@@ -65,7 +57,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
@@ -75,7 +66,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
@@ -83,7 +73,6 @@ export interface FileRouteTypes {
     | '/api/auth/sign-up';
   fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
@@ -91,7 +80,6 @@ export interface FileRouteTypes {
     | '/api/auth/sign-up';
   id:
     | '__root__'
-    | '/'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
@@ -100,7 +88,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute;
   ApiAuthSignInRoute: typeof ApiAuthSignInRoute;
@@ -110,13 +97,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
     '/api/auth/sign-up': {
       id: '/api/auth/sign-up';
       path: '/api/auth/sign-up';
@@ -156,7 +136,6 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiAuthSignInRoute: ApiAuthSignInRoute,
