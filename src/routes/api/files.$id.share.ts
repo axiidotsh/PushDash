@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { auth } from '../../auth';
 import {
   jsonResponse,
   errorResponse,
   getShareUrl,
+  getAuthenticatedUser,
 } from '../../lib/api-helpers';
 
 export const Route = createFileRoute('/api/files/$id/share')({
@@ -13,17 +13,16 @@ export const Route = createFileRoute('/api/files/$id/share')({
       /**
        * POST /api/files/:id/share
        * Create a share link for a file
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       POST: async ({ request, params }) => {
         try {
           const { id } = params;
 
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
-          if (!session?.user) {
+          if (!user) {
             return errorResponse('Not authenticated', 401, 'Unauthorized');
           }
 
@@ -40,7 +39,7 @@ export const Route = createFileRoute('/api/files/$id/share')({
           }
 
           // Check ownership
-          if (file.userId !== session.user.id) {
+          if (file.userId !== user.id) {
             return errorResponse('Access denied', 403, 'Forbidden');
           }
 
@@ -87,17 +86,16 @@ export const Route = createFileRoute('/api/files/$id/share')({
       /**
        * DELETE /api/files/:id/share
        * Revoke all share links for a file
+       * Supports both browser (cookie) and CLI (Bearer token) auth
        */
       DELETE: async ({ request, params }) => {
         try {
           const { id } = params;
 
-          // Get the current user session
-          const session = await auth.api.getSession({
-            headers: request.headers,
-          });
+          // Get the current user (supports both cookie and Bearer token)
+          const user = await getAuthenticatedUser(request);
 
-          if (!session?.user) {
+          if (!user) {
             return errorResponse('Not authenticated', 401, 'Unauthorized');
           }
 
@@ -111,7 +109,7 @@ export const Route = createFileRoute('/api/files/$id/share')({
           }
 
           // Check ownership
-          if (file.userId !== session.user.id) {
+          if (file.userId !== user.id) {
             return errorResponse('Access denied', 403, 'Forbidden');
           }
 
