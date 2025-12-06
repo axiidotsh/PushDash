@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import FormData from 'form-data';
-import { createReadStream, statSync } from 'fs';
+import { createReadStream } from 'fs';
 import { API_BASE_URL, API_ENDPOINTS } from './constants.js';
 import { ConfigManager } from './config-manager.js';
 import type {
@@ -50,18 +50,16 @@ export class ApiClient {
   async logout(): Promise<void> {
     try {
       await this.client.post(API_ENDPOINTS.LOGOUT);
-    } catch (error) {
+    } catch (_error) {
       // Ignore errors during logout
     }
   }
 
-  // User methods
   async getCurrentUser(): Promise<User> {
     const response = await this.client.get(API_ENDPOINTS.USER_ME);
     return response.data.user;
   }
 
-  // File methods
   async uploadFile(
     filePath: string,
     options: {
@@ -71,7 +69,7 @@ export class ApiClient {
     } = {}
   ): Promise<UploadResponse> {
     const form = new FormData();
-    const stats = statSync(filePath);
+    //const stats = statSync(filePath);
 
     form.append('file', createReadStream(filePath));
 
@@ -103,7 +101,6 @@ export class ApiClient {
     return response.data;
   }
 
-  // Error handling helper
   static handleError(error: unknown): string {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError<{ message?: string }>;

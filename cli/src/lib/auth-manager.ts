@@ -15,20 +15,20 @@ export class AuthManager {
 
   async login(): Promise<void> {
     try {
-      // Initiate login flow
+      // Start login flow
       const spinner = Logger.spinner('Initiating login...');
 
       const { loginUrl, deviceCode } = await this.apiClient.initiateLogin();
 
       spinner.succeed('Login initiated');
 
-      // Open browser
+      // Open user's browser
       Logger.info(`Opening browser for authentication...`);
       Logger.info(`If browser doesn't open, visit: ${loginUrl}`);
 
       await open(loginUrl);
 
-      // Poll for authentication
+      // Poll for auth
       const pollSpinner = Logger.spinner('Waiting for authentication...');
 
       const maxAttempts = 60; // 5 minutes (60 attempts * 5 seconds)
@@ -39,7 +39,7 @@ export class AuthManager {
           await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
           const result = await this.apiClient.pollLogin(deviceCode);
 
-          // Login successful
+          // Auth successful
           pollSpinner.succeed('Authentication successful');
 
           // Save token and user info
@@ -47,13 +47,13 @@ export class AuthManager {
 
           Logger.success(`Logged in as ${result.user.email}`);
           return;
-        } catch (error) {
+        } catch (_error) {
           attempts++;
           if (attempts >= maxAttempts) {
             pollSpinner.fail('Authentication timeout');
             throw new Error('Login timeout. Please try again.');
           }
-          // Continue polling
+          // Continue polling for auth
         }
       }
     } catch (error) {
@@ -77,7 +77,7 @@ export class AuthManager {
       // Call logout endpoint
       await this.apiClient.logout();
 
-      // Clear local config
+      // Clear local config, user data
       await this.configManager.clear();
 
       spinner.succeed('Logged out successfully');
@@ -92,7 +92,9 @@ export class AuthManager {
     const isAuthenticated = await this.configManager.isAuthenticated();
 
     if (!isAuthenticated) {
-      Logger.error('Authentication required. Please run "pushdash login"');
+      Logger.error(
+        'Authentication required. Please run "pushdash login" to authenticate.'
+      );
       process.exit(1);
     }
   }

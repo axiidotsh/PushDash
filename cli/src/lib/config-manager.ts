@@ -35,7 +35,7 @@ export class ConfigManager {
         this.config!.apiUrl = API_BASE_URL;
       }
       return this.config!;
-    } catch (error) {
+    } catch (_error) {
       // If config is corrupted, return default
       this.config = this.getDefaultConfig();
       return this.config;

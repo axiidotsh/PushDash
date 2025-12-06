@@ -7,7 +7,7 @@ import { createLogoutCommand } from './commands/logout.js';
 import { createPushCommand } from './commands/push.js';
 import { createWhoamiCommand } from './commands/whoami.js';
 
-// Get package.json version
+// Get version from package.json
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageJson = JSON.parse(
@@ -21,11 +21,9 @@ program
   .description('CLI tool to push files to PushDash cloud dashboard')
   .version(packageJson.version);
 
-// Register commands
 program.addCommand(createLoginCommand());
 program.addCommand(createLogoutCommand());
 program.addCommand(createPushCommand());
 program.addCommand(createWhoamiCommand());
 
-// Parse arguments
 program.parse(process.argv);

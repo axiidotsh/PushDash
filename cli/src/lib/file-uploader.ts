@@ -23,7 +23,7 @@ export class FileUploader {
       isPublic?: boolean;
     } = {}
   ): Promise<UploadResponse> {
-    // Validate file exists
+    // Validate if file atually exists
     if (!existsSync(filePath)) {
       throw new Error(`File not found: ${filePath}`);
     }
@@ -36,7 +36,7 @@ export class FileUploader {
     const filename = basename(filePath);
     const fileSize = stats.size;
 
-    // Create form data
+    // create FormData object for transfer
     const form = new FormData();
     form.append('file', createReadStream(filePath));
 
@@ -50,13 +50,11 @@ export class FileUploader {
       form.append('isPublic', String(options.isPublic));
     }
 
-    // Get auth token
     const token = await this.configManager.getAuthToken();
     if (!token) {
       throw new Error('Authentication required. Please run "pushdash login"');
     }
 
-    // Create spinner for upload
     const spinner = Logger.spinner(`Uploading ${filename}...`);
 
     let lastPercent = 0;
