@@ -1,9 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { signUpSchema, type SignUpInput } from '@/schemas/auth.schema';
@@ -28,6 +29,7 @@ export function SignUpForm({ redirectTo }: SignUpFormProps) {
   const navigate = useNavigate();
   const signUp = useSignUp();
   const githubSignIn = useGitHubSignIn();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignUpInput>({
     resolver: standardSchemaResolver(signUpSchema),
@@ -144,12 +146,29 @@ export function SignUpForm({ redirectTo }: SignUpFormProps) {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...field}
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                      className="pr-10"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
                 <p className="text-muted-foreground text-[0.8rem]">
