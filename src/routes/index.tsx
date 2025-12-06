@@ -9,8 +9,9 @@ import {
   Copy,
   Github,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
+import { AnimatedTerminal } from '@/components/animated-terminal';
 import { useSession } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,83 +24,6 @@ import {
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
-
-// Animated Terminal Component
-function AnimatedTerminal() {
-  const [visibleLines, setVisibleLines] = useState(0);
-
-  useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
-
-    // Stagger line appearance
-    const delays = [0, 800, 1600, 2400, 3200, 4000];
-    delays.forEach((delay, index) => {
-      const timer = setTimeout(() => {
-        setVisibleLines(index + 1);
-      }, delay);
-      timers.push(timer);
-    });
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
-  const lines = [
-    { type: 'command', content: '$ pushdash login' },
-    { type: 'output', content: '◐ Opening browser for authentication...' },
-    { type: 'success', content: '✓ Logged in as dev@example.com' },
-    { type: 'command', content: '$ pushdash push ./report.pdf --tag "work"' },
-    { type: 'success', content: '✓ Uploaded report.pdf (2.4 MB)' },
-    { type: 'link', content: '→ https://pushdash.app/f/abc123' },
-  ];
-
-  return (
-    <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
-      <div className="bg-muted/50 border-b px-4 py-3">
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-red-500/80" />
-          <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-          <div className="h-3 w-3 rounded-full bg-green-500/80" />
-          <span className="text-muted-foreground ml-3 text-xs font-medium">
-            terminal
-          </span>
-        </div>
-      </div>
-      <div className="bg-muted/30 p-4 font-mono text-sm">
-        <div className="space-y-1.5">
-          {lines.map((line, index) => (
-            <div
-              key={index}
-              className={`transition-opacity duration-300 ${
-                index < visibleLines ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              {line.type === 'command' && (
-                <span className="text-foreground">{line.content}</span>
-              )}
-              {line.type === 'output' && (
-                <span className="text-muted-foreground">{line.content}</span>
-              )}
-              {line.type === 'success' && (
-                <span className="text-green-600 dark:text-green-400">
-                  {line.content}
-                </span>
-              )}
-              {line.type === 'link' && (
-                <span className="text-muted-foreground/70">{line.content}</span>
-              )}
-            </div>
-          ))}
-          {visibleLines >= lines.length && (
-            <div className="mt-1 flex items-center">
-              <span className="text-foreground">$</span>
-              <span className="bg-foreground/80 ml-1 inline-block h-4 w-2 animate-pulse" />
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // Code Block with Copy Button
 function CodeBlock({ code, label }: { code: string; label?: string }) {
@@ -193,8 +117,9 @@ function HomePage() {
                 Push files from terminal to cloud
               </h1>
               <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
-                Upload files via CLI, manage them in a beautiful dashboard.
-                Preview, search, and share — all from one command.
+                Upload files using your CLI, manage them in a beautiful
+                dashboard. Preview, search, and share from the terminal or your
+                CLI.
               </p>
 
               <div className="flex flex-col gap-4 sm:flex-row">
@@ -222,8 +147,8 @@ function HomePage() {
                 Why PushDash?
               </h2>
               <p className="text-muted-foreground mx-auto max-w-2xl">
-                A developer-first approach to file management. No bloated apps,
-                no complicated workflows.
+                A developer-first approach to managing files. Just a simple CLI
+                and a beautiful dashboard.
               </p>
             </div>
 
@@ -252,7 +177,6 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Quick Start Section */}
         <section className="py-24 md:py-32">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-12 text-center">
