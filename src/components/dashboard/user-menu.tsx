@@ -117,7 +117,7 @@ export function UserMenu() {
               disabled={signOut.isPending}
               className="text-destructive focus:text-destructive cursor-pointer"
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="text-destructive mr-2 h-4 w-4" />
               {signOut.isPending ? 'Signing out...' : 'Sign out'}
             </DropdownMenuItem>
           </DropdownMenuContent>

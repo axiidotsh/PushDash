@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import type {
   File,
   FileListParams,
@@ -228,4 +228,47 @@ export function extractTagsFromFiles(files: File[]): string[] {
     file.tags.forEach((tag) => tagSet.add(tag));
   });
   return Array.from(tagSet).sort();
+}
+
+/**
+ * API response type for delete operation
+ */
+interface DeleteFileResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Delete a file from the API
+ */
+async function deleteFile(fileId: string): Promise<DeleteFileResponse> {
+  const response = await fetch(`/api/files/${fileId}`, {
+    method: 'DELETE',
+    credentials: 'include', // Include cookies for auth
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    if (response.status === 403) {
+      throw new Error('You do not have permission to delete this file');
+    }
+    if (response.status === 404) {
+      throw new Error('File not found');
+    }
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || 'Failed to delete file');
+  }
+
+  return response.json();
+}
+
+/**
+ * Hook to delete a file
+ */
+export function useDeleteFile() {
+  return useMutation({
+    mutationFn: deleteFile,
+  });
 }
