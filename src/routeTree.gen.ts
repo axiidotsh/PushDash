@@ -8,221 +8,221 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root';
-import { Route as DashboardRouteImport } from './routes/dashboard';
-import { Route as AuthRouteImport } from './routes/_auth';
-import { Route as IndexRouteImport } from './routes/index';
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index';
-import { Route as CliAuthRouteImport } from './routes/cli.auth';
-import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up';
-import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in';
-import { Route as ApiFilesIndexRouteImport } from './routes/api/files.index';
-import { Route as ApiUserMeRouteImport } from './routes/api/user.me';
-import { Route as ApiShareTokenRouteImport } from './routes/api/share.$token';
-import { Route as ApiFilesUploadRouteImport } from './routes/api/files.upload';
-import { Route as ApiFilesIdRouteImport } from './routes/api/files.$id';
-import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth.sign-up';
-import { Route as ApiAuthSignOutRouteImport } from './routes/api/auth.sign-out';
-import { Route as ApiAuthSignInRouteImport } from './routes/api/auth.sign-in';
-import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session';
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$';
-import { Route as ApiShareTokenDownloadRouteImport } from './routes/api/share.$token.download';
-import { Route as ApiFilesIdShareRouteImport } from './routes/api/files.$id.share';
-import { Route as ApiFilesIdDownloadRouteImport } from './routes/api/files.$id.download';
-import { Route as ApiAuthCliPollRouteImport } from './routes/api/auth.cli.poll';
-import { Route as ApiAuthCliInitRouteImport } from './routes/api/auth.cli.init';
-import { Route as ApiAuthCliCallbackRouteImport } from './routes/api/auth.cli.callback';
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as CliAuthRouteImport } from './routes/cli.auth'
+import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
+import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as ApiFilesIndexRouteImport } from './routes/api/files.index'
+import { Route as ApiUserMeRouteImport } from './routes/api/user.me'
+import { Route as ApiShareTokenRouteImport } from './routes/api/share.$token'
+import { Route as ApiFilesUploadRouteImport } from './routes/api/files.upload'
+import { Route as ApiFilesIdRouteImport } from './routes/api/files.$id'
+import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth.sign-up'
+import { Route as ApiAuthSignOutRouteImport } from './routes/api/auth.sign-out'
+import { Route as ApiAuthSignInRouteImport } from './routes/api/auth.sign-in'
+import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as ApiShareTokenDownloadRouteImport } from './routes/api/share.$token.download'
+import { Route as ApiFilesIdShareRouteImport } from './routes/api/files.$id.share'
+import { Route as ApiFilesIdDownloadRouteImport } from './routes/api/files.$id.download'
+import { Route as ApiAuthCliPollRouteImport } from './routes/api/auth.cli.poll'
+import { Route as ApiAuthCliInitRouteImport } from './routes/api/auth.cli.init'
+import { Route as ApiAuthCliCallbackRouteImport } from './routes/api/auth.cli.callback'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
-} as any);
+} as any)
 const CliAuthRoute = CliAuthRouteImport.update({
   id: '/cli/auth',
   path: '/cli/auth',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const AuthSignUpRoute = AuthSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const AuthSignInRoute = AuthSignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => AuthRoute,
-} as any);
+} as any)
 const ApiFilesIndexRoute = ApiFilesIndexRouteImport.update({
   id: '/api/files/',
   path: '/api/files/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiUserMeRoute = ApiUserMeRouteImport.update({
   id: '/api/user/me',
   path: '/api/user/me',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiShareTokenRoute = ApiShareTokenRouteImport.update({
   id: '/api/share/$token',
   path: '/api/share/$token',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiFilesUploadRoute = ApiFilesUploadRouteImport.update({
   id: '/api/files/upload',
   path: '/api/files/upload',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiFilesIdRoute = ApiFilesIdRouteImport.update({
   id: '/api/files/$id',
   path: '/api/files/$id',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSignUpRoute = ApiAuthSignUpRouteImport.update({
   id: '/api/auth/sign-up',
   path: '/api/auth/sign-up',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSignOutRoute = ApiAuthSignOutRouteImport.update({
   id: '/api/auth/sign-out',
   path: '/api/auth/sign-out',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSignInRoute = ApiAuthSignInRouteImport.update({
   id: '/api/auth/sign-in',
   path: '/api/auth/sign-in',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSessionRoute = ApiAuthSessionRouteImport.update({
   id: '/api/auth/session',
   path: '/api/auth/session',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiShareTokenDownloadRoute = ApiShareTokenDownloadRouteImport.update({
   id: '/download',
   path: '/download',
   getParentRoute: () => ApiShareTokenRoute,
-} as any);
+} as any)
 const ApiFilesIdShareRoute = ApiFilesIdShareRouteImport.update({
   id: '/share',
   path: '/share',
   getParentRoute: () => ApiFilesIdRoute,
-} as any);
+} as any)
 const ApiFilesIdDownloadRoute = ApiFilesIdDownloadRouteImport.update({
   id: '/download',
   path: '/download',
   getParentRoute: () => ApiFilesIdRoute,
-} as any);
+} as any)
 const ApiAuthCliPollRoute = ApiAuthCliPollRouteImport.update({
   id: '/api/auth/cli/poll',
   path: '/api/auth/cli/poll',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthCliInitRoute = ApiAuthCliInitRouteImport.update({
   id: '/api/auth/cli/init',
   path: '/api/auth/cli/init',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const ApiAuthCliCallbackRoute = ApiAuthCliCallbackRouteImport.update({
   id: '/api/auth/cli/callback',
   path: '/api/auth/cli/callback',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '/dashboard': typeof DashboardRouteWithChildren;
-  '/sign-in': typeof AuthSignInRoute;
-  '/sign-up': typeof AuthSignUpRoute;
-  '/cli/auth': typeof CliAuthRoute;
-  '/dashboard/': typeof DashboardIndexRoute;
-  '/api/auth/$': typeof ApiAuthSplatRoute;
-  '/api/auth/session': typeof ApiAuthSessionRoute;
-  '/api/auth/sign-in': typeof ApiAuthSignInRoute;
-  '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
-  '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/files/$id': typeof ApiFilesIdRouteWithChildren;
-  '/api/files/upload': typeof ApiFilesUploadRoute;
-  '/api/share/$token': typeof ApiShareTokenRouteWithChildren;
-  '/api/user/me': typeof ApiUserMeRoute;
-  '/api/files': typeof ApiFilesIndexRoute;
-  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute;
-  '/api/auth/cli/init': typeof ApiAuthCliInitRoute;
-  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute;
-  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute;
-  '/api/files/$id/share': typeof ApiFilesIdShareRoute;
-  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute;
+  '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/cli/auth': typeof CliAuthRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-out': typeof ApiAuthSignOutRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/files/$id': typeof ApiFilesIdRouteWithChildren
+  '/api/files/upload': typeof ApiFilesUploadRoute
+  '/api/share/$token': typeof ApiShareTokenRouteWithChildren
+  '/api/user/me': typeof ApiUserMeRoute
+  '/api/files': typeof ApiFilesIndexRoute
+  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
+  '/api/auth/cli/init': typeof ApiAuthCliInitRoute
+  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
+  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
+  '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '/sign-in': typeof AuthSignInRoute;
-  '/sign-up': typeof AuthSignUpRoute;
-  '/cli/auth': typeof CliAuthRoute;
-  '/dashboard': typeof DashboardIndexRoute;
-  '/api/auth/$': typeof ApiAuthSplatRoute;
-  '/api/auth/session': typeof ApiAuthSessionRoute;
-  '/api/auth/sign-in': typeof ApiAuthSignInRoute;
-  '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
-  '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/files/$id': typeof ApiFilesIdRouteWithChildren;
-  '/api/files/upload': typeof ApiFilesUploadRoute;
-  '/api/share/$token': typeof ApiShareTokenRouteWithChildren;
-  '/api/user/me': typeof ApiUserMeRoute;
-  '/api/files': typeof ApiFilesIndexRoute;
-  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute;
-  '/api/auth/cli/init': typeof ApiAuthCliInitRoute;
-  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute;
-  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute;
-  '/api/files/$id/share': typeof ApiFilesIdShareRoute;
-  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute;
+  '/': typeof IndexRoute
+  '/sign-in': typeof AuthSignInRoute
+  '/sign-up': typeof AuthSignUpRoute
+  '/cli/auth': typeof CliAuthRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-out': typeof ApiAuthSignOutRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/files/$id': typeof ApiFilesIdRouteWithChildren
+  '/api/files/upload': typeof ApiFilesUploadRoute
+  '/api/share/$token': typeof ApiShareTokenRouteWithChildren
+  '/api/user/me': typeof ApiUserMeRoute
+  '/api/files': typeof ApiFilesIndexRoute
+  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
+  '/api/auth/cli/init': typeof ApiAuthCliInitRoute
+  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
+  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
+  '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  '/': typeof IndexRoute;
-  '/_auth': typeof AuthRouteWithChildren;
-  '/dashboard': typeof DashboardRouteWithChildren;
-  '/_auth/sign-in': typeof AuthSignInRoute;
-  '/_auth/sign-up': typeof AuthSignUpRoute;
-  '/cli/auth': typeof CliAuthRoute;
-  '/dashboard/': typeof DashboardIndexRoute;
-  '/api/auth/$': typeof ApiAuthSplatRoute;
-  '/api/auth/session': typeof ApiAuthSessionRoute;
-  '/api/auth/sign-in': typeof ApiAuthSignInRoute;
-  '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
-  '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/files/$id': typeof ApiFilesIdRouteWithChildren;
-  '/api/files/upload': typeof ApiFilesUploadRoute;
-  '/api/share/$token': typeof ApiShareTokenRouteWithChildren;
-  '/api/user/me': typeof ApiUserMeRoute;
-  '/api/files/': typeof ApiFilesIndexRoute;
-  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute;
-  '/api/auth/cli/init': typeof ApiAuthCliInitRoute;
-  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute;
-  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute;
-  '/api/files/$id/share': typeof ApiFilesIdShareRoute;
-  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_auth': typeof AuthRouteWithChildren
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/_auth/sign-in': typeof AuthSignInRoute
+  '/_auth/sign-up': typeof AuthSignUpRoute
+  '/cli/auth': typeof CliAuthRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/auth/session': typeof ApiAuthSessionRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-out': typeof ApiAuthSignOutRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/files/$id': typeof ApiFilesIdRouteWithChildren
+  '/api/files/upload': typeof ApiFilesUploadRoute
+  '/api/share/$token': typeof ApiShareTokenRouteWithChildren
+  '/api/user/me': typeof ApiUserMeRoute
+  '/api/files/': typeof ApiFilesIndexRoute
+  '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
+  '/api/auth/cli/init': typeof ApiAuthCliInitRoute
+  '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
+  '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
+  '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/dashboard'
@@ -245,8 +245,8 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
-    | '/api/share/$token/download';
-  fileRoutesByTo: FileRoutesByTo;
+    | '/api/share/$token/download'
+  fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/sign-in'
@@ -268,7 +268,7 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
-    | '/api/share/$token/download';
+    | '/api/share/$token/download'
   id:
     | '__root__'
     | '/'
@@ -293,244 +293,244 @@ export interface FileRouteTypes {
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
-    | '/api/share/$token/download';
-  fileRoutesById: FileRoutesById;
+    | '/api/share/$token/download'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  AuthRoute: typeof AuthRouteWithChildren;
-  DashboardRoute: typeof DashboardRouteWithChildren;
-  CliAuthRoute: typeof CliAuthRoute;
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
-  ApiAuthSessionRoute: typeof ApiAuthSessionRoute;
-  ApiAuthSignInRoute: typeof ApiAuthSignInRoute;
-  ApiAuthSignOutRoute: typeof ApiAuthSignOutRoute;
-  ApiAuthSignUpRoute: typeof ApiAuthSignUpRoute;
-  ApiFilesIdRoute: typeof ApiFilesIdRouteWithChildren;
-  ApiFilesUploadRoute: typeof ApiFilesUploadRoute;
-  ApiShareTokenRoute: typeof ApiShareTokenRouteWithChildren;
-  ApiUserMeRoute: typeof ApiUserMeRoute;
-  ApiFilesIndexRoute: typeof ApiFilesIndexRoute;
-  ApiAuthCliCallbackRoute: typeof ApiAuthCliCallbackRoute;
-  ApiAuthCliInitRoute: typeof ApiAuthCliInitRoute;
-  ApiAuthCliPollRoute: typeof ApiAuthCliPollRoute;
+  IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  DashboardRoute: typeof DashboardRouteWithChildren
+  CliAuthRoute: typeof CliAuthRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiAuthSessionRoute: typeof ApiAuthSessionRoute
+  ApiAuthSignInRoute: typeof ApiAuthSignInRoute
+  ApiAuthSignOutRoute: typeof ApiAuthSignOutRoute
+  ApiAuthSignUpRoute: typeof ApiAuthSignUpRoute
+  ApiFilesIdRoute: typeof ApiFilesIdRouteWithChildren
+  ApiFilesUploadRoute: typeof ApiFilesUploadRoute
+  ApiShareTokenRoute: typeof ApiShareTokenRouteWithChildren
+  ApiUserMeRoute: typeof ApiUserMeRoute
+  ApiFilesIndexRoute: typeof ApiFilesIndexRoute
+  ApiAuthCliCallbackRoute: typeof ApiAuthCliCallbackRoute
+  ApiAuthCliInitRoute: typeof ApiAuthCliInitRoute
+  ApiAuthCliPollRoute: typeof ApiAuthCliPollRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/dashboard': {
-      id: '/dashboard';
-      path: '/dashboard';
-      fullPath: '/dashboard';
-      preLoaderRoute: typeof DashboardRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
-      id: '/_auth';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof AuthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/': {
-      id: '/dashboard/';
-      path: '/';
-      fullPath: '/dashboard/';
-      preLoaderRoute: typeof DashboardIndexRouteImport;
-      parentRoute: typeof DashboardRoute;
-    };
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/cli/auth': {
-      id: '/cli/auth';
-      path: '/cli/auth';
-      fullPath: '/cli/auth';
-      preLoaderRoute: typeof CliAuthRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/cli/auth'
+      path: '/cli/auth'
+      fullPath: '/cli/auth'
+      preLoaderRoute: typeof CliAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/sign-up': {
-      id: '/_auth/sign-up';
-      path: '/sign-up';
-      fullPath: '/sign-up';
-      preLoaderRoute: typeof AuthSignUpRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
+      id: '/_auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/sign-in': {
-      id: '/_auth/sign-in';
-      path: '/sign-in';
-      fullPath: '/sign-in';
-      preLoaderRoute: typeof AuthSignInRouteImport;
-      parentRoute: typeof AuthRoute;
-    };
+      id: '/_auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/api/files/': {
-      id: '/api/files/';
-      path: '/api/files';
-      fullPath: '/api/files';
-      preLoaderRoute: typeof ApiFilesIndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/files/'
+      path: '/api/files'
+      fullPath: '/api/files'
+      preLoaderRoute: typeof ApiFilesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/user/me': {
-      id: '/api/user/me';
-      path: '/api/user/me';
-      fullPath: '/api/user/me';
-      preLoaderRoute: typeof ApiUserMeRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/user/me'
+      path: '/api/user/me'
+      fullPath: '/api/user/me'
+      preLoaderRoute: typeof ApiUserMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/share/$token': {
-      id: '/api/share/$token';
-      path: '/api/share/$token';
-      fullPath: '/api/share/$token';
-      preLoaderRoute: typeof ApiShareTokenRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/share/$token'
+      path: '/api/share/$token'
+      fullPath: '/api/share/$token'
+      preLoaderRoute: typeof ApiShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/files/upload': {
-      id: '/api/files/upload';
-      path: '/api/files/upload';
-      fullPath: '/api/files/upload';
-      preLoaderRoute: typeof ApiFilesUploadRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/files/upload'
+      path: '/api/files/upload'
+      fullPath: '/api/files/upload'
+      preLoaderRoute: typeof ApiFilesUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/files/$id': {
-      id: '/api/files/$id';
-      path: '/api/files/$id';
-      fullPath: '/api/files/$id';
-      preLoaderRoute: typeof ApiFilesIdRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/files/$id'
+      path: '/api/files/$id'
+      fullPath: '/api/files/$id'
+      preLoaderRoute: typeof ApiFilesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/sign-up': {
-      id: '/api/auth/sign-up';
-      path: '/api/auth/sign-up';
-      fullPath: '/api/auth/sign-up';
-      preLoaderRoute: typeof ApiAuthSignUpRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/sign-up'
+      path: '/api/auth/sign-up'
+      fullPath: '/api/auth/sign-up'
+      preLoaderRoute: typeof ApiAuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/sign-out': {
-      id: '/api/auth/sign-out';
-      path: '/api/auth/sign-out';
-      fullPath: '/api/auth/sign-out';
-      preLoaderRoute: typeof ApiAuthSignOutRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/sign-out'
+      path: '/api/auth/sign-out'
+      fullPath: '/api/auth/sign-out'
+      preLoaderRoute: typeof ApiAuthSignOutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/sign-in': {
-      id: '/api/auth/sign-in';
-      path: '/api/auth/sign-in';
-      fullPath: '/api/auth/sign-in';
-      preLoaderRoute: typeof ApiAuthSignInRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/sign-in'
+      path: '/api/auth/sign-in'
+      fullPath: '/api/auth/sign-in'
+      preLoaderRoute: typeof ApiAuthSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/session': {
-      id: '/api/auth/session';
-      path: '/api/auth/session';
-      fullPath: '/api/auth/session';
-      preLoaderRoute: typeof ApiAuthSessionRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/session'
+      path: '/api/auth/session'
+      fullPath: '/api/auth/session'
+      preLoaderRoute: typeof ApiAuthSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
-      id: '/api/auth/$';
-      path: '/api/auth/$';
-      fullPath: '/api/auth/$';
-      preLoaderRoute: typeof ApiAuthSplatRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/share/$token/download': {
-      id: '/api/share/$token/download';
-      path: '/download';
-      fullPath: '/api/share/$token/download';
-      preLoaderRoute: typeof ApiShareTokenDownloadRouteImport;
-      parentRoute: typeof ApiShareTokenRoute;
-    };
+      id: '/api/share/$token/download'
+      path: '/download'
+      fullPath: '/api/share/$token/download'
+      preLoaderRoute: typeof ApiShareTokenDownloadRouteImport
+      parentRoute: typeof ApiShareTokenRoute
+    }
     '/api/files/$id/share': {
-      id: '/api/files/$id/share';
-      path: '/share';
-      fullPath: '/api/files/$id/share';
-      preLoaderRoute: typeof ApiFilesIdShareRouteImport;
-      parentRoute: typeof ApiFilesIdRoute;
-    };
+      id: '/api/files/$id/share'
+      path: '/share'
+      fullPath: '/api/files/$id/share'
+      preLoaderRoute: typeof ApiFilesIdShareRouteImport
+      parentRoute: typeof ApiFilesIdRoute
+    }
     '/api/files/$id/download': {
-      id: '/api/files/$id/download';
-      path: '/download';
-      fullPath: '/api/files/$id/download';
-      preLoaderRoute: typeof ApiFilesIdDownloadRouteImport;
-      parentRoute: typeof ApiFilesIdRoute;
-    };
+      id: '/api/files/$id/download'
+      path: '/download'
+      fullPath: '/api/files/$id/download'
+      preLoaderRoute: typeof ApiFilesIdDownloadRouteImport
+      parentRoute: typeof ApiFilesIdRoute
+    }
     '/api/auth/cli/poll': {
-      id: '/api/auth/cli/poll';
-      path: '/api/auth/cli/poll';
-      fullPath: '/api/auth/cli/poll';
-      preLoaderRoute: typeof ApiAuthCliPollRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/cli/poll'
+      path: '/api/auth/cli/poll'
+      fullPath: '/api/auth/cli/poll'
+      preLoaderRoute: typeof ApiAuthCliPollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/cli/init': {
-      id: '/api/auth/cli/init';
-      path: '/api/auth/cli/init';
-      fullPath: '/api/auth/cli/init';
-      preLoaderRoute: typeof ApiAuthCliInitRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/cli/init'
+      path: '/api/auth/cli/init'
+      fullPath: '/api/auth/cli/init'
+      preLoaderRoute: typeof ApiAuthCliInitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/cli/callback': {
-      id: '/api/auth/cli/callback';
-      path: '/api/auth/cli/callback';
-      fullPath: '/api/auth/cli/callback';
-      preLoaderRoute: typeof ApiAuthCliCallbackRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+      id: '/api/auth/cli/callback'
+      path: '/api/auth/cli/callback'
+      fullPath: '/api/auth/cli/callback'
+      preLoaderRoute: typeof ApiAuthCliCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthRouteChildren {
-  AuthSignInRoute: typeof AuthSignInRoute;
-  AuthSignUpRoute: typeof AuthSignUpRoute;
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
-};
+}
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
-  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
-};
+}
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren
-);
+  DashboardRouteChildren,
+)
 
 interface ApiFilesIdRouteChildren {
-  ApiFilesIdDownloadRoute: typeof ApiFilesIdDownloadRoute;
-  ApiFilesIdShareRoute: typeof ApiFilesIdShareRoute;
+  ApiFilesIdDownloadRoute: typeof ApiFilesIdDownloadRoute
+  ApiFilesIdShareRoute: typeof ApiFilesIdShareRoute
 }
 
 const ApiFilesIdRouteChildren: ApiFilesIdRouteChildren = {
   ApiFilesIdDownloadRoute: ApiFilesIdDownloadRoute,
   ApiFilesIdShareRoute: ApiFilesIdShareRoute,
-};
+}
 
 const ApiFilesIdRouteWithChildren = ApiFilesIdRoute._addFileChildren(
-  ApiFilesIdRouteChildren
-);
+  ApiFilesIdRouteChildren,
+)
 
 interface ApiShareTokenRouteChildren {
-  ApiShareTokenDownloadRoute: typeof ApiShareTokenDownloadRoute;
+  ApiShareTokenDownloadRoute: typeof ApiShareTokenDownloadRoute
 }
 
 const ApiShareTokenRouteChildren: ApiShareTokenRouteChildren = {
   ApiShareTokenDownloadRoute: ApiShareTokenDownloadRoute,
-};
+}
 
 const ApiShareTokenRouteWithChildren = ApiShareTokenRoute._addFileChildren(
-  ApiShareTokenRouteChildren
-);
+  ApiShareTokenRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -550,16 +550,16 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthCliCallbackRoute: ApiAuthCliCallbackRoute,
   ApiAuthCliInitRoute: ApiAuthCliInitRoute,
   ApiAuthCliPollRoute: ApiAuthCliPollRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from './router.tsx';
-import type { createStart } from '@tanstack/react-start';
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
 declare module '@tanstack/react-start' {
   interface Register {
-    ssr: true;
-    router: Awaited<ReturnType<typeof getRouter>>;
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
   }
 }
