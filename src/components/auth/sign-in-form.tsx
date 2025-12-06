@@ -56,9 +56,6 @@ export function SignInForm({ redirectTo }: SignInFormProps) {
     }
   };
 
-  // Build sign-up link with redirect if present
-  const signUpSearch = redirectTo ? { redirect: redirectTo } : undefined;
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
