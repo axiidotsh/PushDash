@@ -1,3 +1,3 @@
-# Push Dash
+Push Dash
 
-Upload files via CLI, manage them in a beautiful dashboard. Preview, search, and share with one command.
+Effortlessly upload files from the CLI and manage them in a clean, intuitive dashboard. Preview your assets, search instantly, organize with ease, and share them anywhere — all with a single command. Push Dash keeps your workflow fast, simple, and beautifully streamlined.
