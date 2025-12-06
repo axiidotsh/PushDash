@@ -161,23 +161,32 @@ export function FilePreview({
     );
   }
 
+  // Use downloadUrl for fetching actual file content (url is the dashboard page URL)
+  const contentUrl = downloadUrl;
+
   switch (previewType) {
     case 'image':
-      return <ImagePreview url={url} alt={filename} className={className} />;
+      return (
+        <ImagePreview url={contentUrl} alt={filename} className={className} />
+      );
 
     case 'pdf':
-      return <PdfPreview url={url} className={className} />;
+      return <PdfPreview url={contentUrl} className={className} />;
 
     case 'markdown':
-      return <MarkdownPreview url={url} className={className} />;
+      return <MarkdownPreview url={contentUrl} className={className} />;
 
     case 'code':
       return (
-        <CodePreview url={url} filename={filename} className={className} />
+        <CodePreview
+          url={contentUrl}
+          filename={filename}
+          className={className}
+        />
       );
 
     case 'text':
-      return <TextPreview url={url} className={className} />;
+      return <TextPreview url={contentUrl} className={className} />;
 
     default:
       return null;

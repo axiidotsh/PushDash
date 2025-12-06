@@ -39,19 +39,6 @@ function truncate(str: string, maxLen: number): string {
   return str.slice(0, maxLen - 1) + '…';
 }
 
-function padEnd(str: string, len: number): string {
-  // Handle strings with ANSI codes or emojis
-  const visibleLen = str.replace(/\x1b\[[0-9;]*m/g, '').length;
-  const padding = Math.max(0, len - visibleLen);
-  return str + ' '.repeat(padding);
-}
-
-function padStart(str: string, len: number): string {
-  const visibleLen = str.replace(/\x1b\[[0-9;]*m/g, '').length;
-  const padding = Math.max(0, len - visibleLen);
-  return ' '.repeat(padding) + str;
-}
-
 function getFileTypeIcon(mimeType: string): string {
   if (mimeType.startsWith('image/')) return '🖼 ';
   if (mimeType.startsWith('text/')) return '📄';
@@ -90,10 +77,12 @@ function displayFiles(
       const visibility = file.isPublic
         ? chalk.green('public')
         : chalk.dim('private');
-      const id = showId ? chalk.dim(`[${file.id.slice(0, 8)}] `) : '';
       Logger.log(
-        `${id}${file.filename} ${chalk.dim(`(${formatFileSize(file.size)})`)} ${visibility}`
+        `${file.filename} ${chalk.dim(`(${formatFileSize(file.size)})`)} ${visibility}`
       );
+      if (showId) {
+        Logger.log(chalk.dim(`  ID: ${file.id}`));
+      }
       if (showUrl) {
         Logger.log(chalk.dim(`  → ${file.url}`));
       }
@@ -102,37 +91,25 @@ function displayFiles(
     // Table view with proper alignment
     Logger.log('');
 
-    // Calculate column widths
-    const COL_ID = 12;
-    const COL_NAME = showId ? 30 : 35;
+    // Column widths
+    const COL_NAME = 36;
     const COL_SIZE = 9;
     const COL_VIS = 8;
-    const COL_DATE = 12;
+    const COL_DATE = 11;
 
     // Header
-    let header = '';
-    if (showId) {
-      header += chalk.dim(padEnd('ID', COL_ID));
-    }
-    header += chalk.bold(padEnd('Filename', COL_NAME + 2)); // +2 for icon
-    header += chalk.dim(padStart('Size', COL_SIZE));
-    header += '  ';
-    header += chalk.dim(padEnd('Visibility', COL_VIS));
-    header += '  ';
-    header += chalk.dim('Uploaded');
+    const header =
+      chalk.bold('Filename'.padEnd(COL_NAME)) +
+      chalk.dim('Size'.padStart(COL_SIZE)) +
+      '  ' +
+      chalk.dim('Visibility'.padEnd(COL_VIS)) +
+      '  ' +
+      chalk.dim('Uploaded');
 
     Logger.log(header);
-
-    const lineWidth =
-      (showId ? COL_ID : 0) +
-      COL_NAME +
-      2 +
-      COL_SIZE +
-      2 +
-      COL_VIS +
-      2 +
-      COL_DATE;
-    Logger.log(chalk.dim('─'.repeat(lineWidth)));
+    Logger.log(
+      chalk.dim('─'.repeat(COL_NAME + COL_SIZE + COL_VIS + COL_DATE + 6))
+    );
 
     // Rows
     files.forEach((file) => {
@@ -143,29 +120,36 @@ function displayFiles(
       const date = formatDate(file.createdAt);
       const size = formatFileSize(file.size);
       const tag = file.tag ? chalk.cyan(` #${file.tag}`) : '';
-      const name = truncate(
-        file.filename,
-        COL_NAME - (file.tag ? file.tag.length + 2 : 0)
+      const tagLen = file.tag ? file.tag.length + 2 : 0;
+      const maxNameLen = COL_NAME - 3 - tagLen; // -3 for icon+space
+      const name = truncate(file.filename, maxNameLen);
+
+      // Build row with manual spacing for alignment
+      const nameCol = icon + ' ' + name + tag;
+      const namePadding = ' '.repeat(
+        Math.max(0, COL_NAME - name.length - 3 - tagLen)
       );
 
-      let row = '';
-      if (showId) {
-        row += chalk.dim(padEnd(file.id.slice(0, 10) + '..', COL_ID));
-      }
-      row += icon + ' ';
-      row += padEnd(name + tag, COL_NAME);
-      row += padStart(size, COL_SIZE);
-      row += '  ';
-      row += padEnd(visibility, COL_VIS);
-      row += '  ';
-      row += chalk.dim(date);
+      const row =
+        nameCol +
+        namePadding +
+        size.padStart(COL_SIZE) +
+        '  ' +
+        (file.isPublic ? chalk.green('public') : chalk.dim('private')).padEnd(
+          COL_VIS + 10
+        ) +
+        chalk.dim(date);
 
       Logger.log(row);
 
-      // Show URL on next line if requested
+      // Show full ID below the row (not truncated!)
+      if (showId) {
+        Logger.log(chalk.dim(`    ID: ${file.id}`));
+      }
+
+      // Show URL below the row
       if (showUrl) {
-        const indent = showId ? ' '.repeat(COL_ID) : '';
-        Logger.log(indent + chalk.dim(`   ↳ ${file.url}`));
+        Logger.log(chalk.dim(`    ↳  ${file.url}`));
       }
     });
 

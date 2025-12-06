@@ -243,7 +243,7 @@ function CliAuthLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md">
         <Card className="overflow-hidden">{children}</Card>
         <p className="text-muted-foreground mt-6 text-center text-xs">
-          PushDash — Push files from terminal to cloud
+          PushDash - Push files from terminal to cloud
         </p>
       </div>
     </div>

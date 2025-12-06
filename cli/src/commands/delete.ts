@@ -4,6 +4,7 @@ import prompts from 'prompts';
 import { AuthManager } from '../lib/auth-manager.js';
 import { ApiClient } from '../lib/api-client.js';
 import { Logger } from '../lib/logger.js';
+import { resolveFile } from '../lib/file-resolver.js';
 
 export function createDeleteCommand(): Command {
   const command = new Command('delete');
@@ -11,19 +12,29 @@ export function createDeleteCommand(): Command {
   command
     .alias('rm')
     .description('Delete a file from PushDash')
-    .argument('<file-id>', 'ID of the file to delete')
+    .argument('<file>', 'File ID or filename to delete')
     .option('-f, --force', 'Skip confirmation prompt', false)
-    .action(async (fileId: string, options: { force: boolean }) => {
+    .action(async (fileIdentifier: string, options: { force: boolean }) => {
       try {
         const authManager = new AuthManager();
         await authManager.requireAuth();
 
         const apiClient = new ApiClient();
 
+        // Resolve file by ID or filename
+        const { id: fileId, file } = await resolveFile(
+          apiClient,
+          fileIdentifier,
+          'Looking up file...'
+        );
+
         // If not forced, ask for confirmation
         if (!options.force) {
           Logger.log('');
-          Logger.warn(`You are about to delete file: ${chalk.bold(fileId)}`);
+          Logger.warn(
+            `You are about to delete: ${chalk.bold(file.originalName || file.filename)}`
+          );
+          Logger.log(chalk.dim(`ID: ${fileId}`));
           Logger.log(chalk.dim('This action cannot be undone.'));
           Logger.log('');
 

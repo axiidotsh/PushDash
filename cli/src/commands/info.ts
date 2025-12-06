@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { AuthManager } from '../lib/auth-manager.js';
 import { ApiClient } from '../lib/api-client.js';
 import { Logger } from '../lib/logger.js';
+import { resolveFile } from '../lib/file-resolver.js';
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B';
@@ -21,20 +22,21 @@ export function createInfoCommand(): Command {
 
   command
     .description('Get detailed information about a file')
-    .argument('<file-id>', 'ID of the file')
+    .argument('<file>', 'File ID or filename')
     .option('--json', 'Output as JSON')
-    .action(async (fileId: string, options: { json?: boolean }) => {
+    .action(async (fileIdentifier: string, options: { json?: boolean }) => {
       try {
         const authManager = new AuthManager();
         await authManager.requireAuth();
 
         const apiClient = new ApiClient();
-        const spinner = Logger.spinner('Fetching file info...');
 
-        const response = await apiClient.getFile(fileId);
-        spinner.stop();
-
-        const file = response.file;
+        // Resolve file by ID or filename
+        const { id: fileId, file } = await resolveFile(
+          apiClient,
+          fileIdentifier,
+          'Fetching file info...'
+        );
 
         if (options.json) {
           Logger.log(JSON.stringify(file, null, 2));
@@ -48,7 +50,7 @@ export function createInfoCommand(): Command {
         Logger.log('');
 
         const info: [string, string][] = [
-          ['ID', file.id],
+          ['ID', fileId],
           ['Filename', file.filename],
           ['Original Name', file.originalName || file.filename],
           ['Type', file.mimeType || file.type],
