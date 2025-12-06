@@ -1,9 +1,12 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import type { File, FileListParams, FileListResponse } from '@/types/file';
-import { getFileType } from '@/types/file';
-import { mockFiles } from '@/lib/mock-data';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import type {
+  File,
+  FileListParams,
+  FileListResponse,
+  Visibility,
+} from '@/types/file';
 
 export const filesQueryKey = ['files'] as const;
 
@@ -11,108 +14,261 @@ export function createFilesQueryKey(params?: FileListParams) {
   return params ? [...filesQueryKey, params] : filesQueryKey;
 }
 
-function delay(ms: number = 500): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * Map frontend FileType to MIME type prefix for API filtering
+ */
+function fileTypeToMimePrefix(fileType: string): string {
+  switch (fileType) {
+    case 'image':
+      return 'image/';
+    case 'pdf':
+      return 'application/pdf';
+    case 'text':
+      return 'text/';
+    case 'code':
+      return 'text/'; // Code files are typically text/*
+    default:
+      return '';
+  }
 }
 
-function filterAndSortFiles(
-  files: File[],
-  params?: FileListParams
-): FileListResponse {
-  let filtered = [...files];
-
-  if (params?.search) {
-    const search = params.search.toLowerCase();
-    filtered = filtered.filter(
-      (f) =>
-        f.filename.toLowerCase().includes(search) ||
-        f.tags.some((t) => t.toLowerCase().includes(search)) ||
-        f.message?.toLowerCase().includes(search)
-    );
+/**
+ * Map frontend sort field to backend sort field
+ */
+function mapSortField(sortBy: string): string {
+  if (sortBy === 'uploadedAt') {
+    return 'createdAt';
   }
+  return sortBy;
+}
 
-  if (params?.visibility) {
-    filtered = filtered.filter((f) => f.visibility === params.visibility);
-  }
+/**
+ * API response type from the backend
+ */
+interface ApiFileResponse {
+  id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  type: string;
+  size: number;
+  tag: string | null;
+  message: string | null;
+  isPublic: boolean;
+  url: string;
+  downloadUrl: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  if (params?.tags && params.tags.length > 0) {
-    filtered = filtered.filter((f) =>
-      params.tags!.some((tag) => f.tags.includes(tag))
-    );
-  }
-
-  if (params?.fileType) {
-    filtered = filtered.filter(
-      (f) => getFileType(f.mimeType) === params.fileType
-    );
-  }
-
-  if (params?.dateFrom) {
-    filtered = filtered.filter(
-      (f) => new Date(f.uploadedAt) >= params.dateFrom!
-    );
-  }
-
-  if (params?.dateTo) {
-    const endOfDay = new Date(params.dateTo);
-    endOfDay.setHours(23, 59, 59, 999);
-    filtered = filtered.filter((f) => new Date(f.uploadedAt) <= endOfDay);
-  }
-
-  const sortBy = params?.sortBy || 'uploadedAt';
-  const sortOrder = params?.sortOrder || 'desc';
-
-  filtered.sort((a, b) => {
-    let comparison = 0;
-    switch (sortBy) {
-      case 'filename':
-        comparison = a.filename.localeCompare(b.filename);
-        break;
-      case 'size':
-        comparison = a.size - b.size;
-        break;
-      case 'uploadedAt':
-      default:
-        comparison = a.uploadedAt.getTime() - b.uploadedAt.getTime();
-        break;
-    }
-    return sortOrder === 'desc' ? -comparison : comparison;
-  });
-
-  const page = params?.page || 1;
-  const pageSize = params?.pageSize || 20;
-  const startIndex = (page - 1) * pageSize;
-  const paginatedFiles = filtered.slice(startIndex, startIndex + pageSize);
-
-  return {
-    files: paginatedFiles,
-    total: filtered.length,
-    page,
-    pageSize,
-    totalPages: Math.ceil(filtered.length / pageSize),
+interface ApiFilesResponse {
+  files: ApiFileResponse[];
+  total: number;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasMore: boolean;
   };
 }
 
+/**
+ * Transform API file response to frontend File type
+ */
+function transformFile(apiFile: ApiFileResponse): File {
+  return {
+    id: apiFile.id,
+    filename: apiFile.filename,
+    originalName: apiFile.originalName,
+    size: apiFile.size,
+    mimeType: apiFile.mimeType,
+    visibility: (apiFile.isPublic ? 'PUBLIC' : 'PRIVATE') as Visibility,
+    tags: apiFile.tag ? [apiFile.tag] : [],
+    message: apiFile.message,
+    s3Key: `files/${apiFile.id}`, // Placeholder - we have url/downloadUrl instead
+    uploadedAt: new Date(apiFile.createdAt),
+    updatedAt: new Date(apiFile.updatedAt),
+    userId: '', // Not returned by API, not needed for display
+  };
+}
+
+/**
+ * Fetch files from the API
+ */
+async function fetchFiles(params?: FileListParams): Promise<FileListResponse> {
+  const searchParams = new URLSearchParams();
+
+  // Map pagination
+  if (params?.page) {
+    searchParams.set('page', params.page.toString());
+  }
+  if (params?.pageSize) {
+    searchParams.set('limit', params.pageSize.toString());
+  }
+
+  // Map sorting
+  if (params?.sortBy) {
+    searchParams.set('sortBy', mapSortField(params.sortBy));
+  }
+  if (params?.sortOrder) {
+    searchParams.set('sortOrder', params.sortOrder);
+  }
+
+  // Map search
+  if (params?.search) {
+    searchParams.set('search', params.search);
+  }
+
+  // Map file type to MIME prefix
+  if (params?.fileType) {
+    const mimePrefix = fileTypeToMimePrefix(params.fileType);
+    if (mimePrefix) {
+      searchParams.set('mimeType', mimePrefix);
+    }
+  }
+
+  // Map tags (backend only supports single tag)
+  if (params?.tags && params.tags.length > 0) {
+    searchParams.set('tag', params.tags[0]);
+  }
+
+  // Map visibility
+  if (params?.visibility) {
+    searchParams.set('isPublic', (params.visibility === 'PUBLIC').toString());
+  }
+
+  const url = `/api/files${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+
+  const response = await fetch(url, {
+    credentials: 'include', // Include cookies for auth
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    throw new Error('Failed to fetch files');
+  }
+
+  const data: ApiFilesResponse = await response.json();
+
+  return {
+    files: data.files.map(transformFile),
+    total: data.total,
+    page: data.pagination.page,
+    pageSize: data.pagination.limit,
+    totalPages: data.pagination.totalPages,
+  };
+}
+
+/**
+ * Hook to fetch user's files with filtering and pagination
+ * Polls every 10 seconds for new uploads
+ */
 export function useFiles(params?: FileListParams) {
   return useQuery({
     queryKey: createFilesQueryKey(params),
-    queryFn: async (): Promise<FileListResponse> => {
-      await delay(300);
-      return filterAndSortFiles(mockFiles, params);
-    },
+    queryFn: () => fetchFiles(params),
+    staleTime: 1000 * 10, // 10 seconds
+    refetchInterval: 1000 * 10, // Poll every 10 seconds
+  });
+}
+
+/**
+ * API response type for single file
+ */
+interface ApiSingleFileResponse {
+  file: ApiFileResponse & {
+    shareUrl?: string;
+    isOwner: boolean;
+  };
+}
+
+/**
+ * Fetch a single file from the API
+ */
+async function fetchFile(fileId: string): Promise<File | null> {
+  const response = await fetch(`/api/files/${fileId}`, {
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return null;
+    }
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    throw new Error('Failed to fetch file');
+  }
+
+  const data: ApiSingleFileResponse = await response.json();
+  return transformFile(data.file);
+}
+
+/**
+ * Hook to fetch a single file by ID
+ */
+export function useFile(fileId: string | undefined) {
+  return useQuery({
+    queryKey: ['file', fileId],
+    queryFn: () => fetchFile(fileId!),
+    enabled: !!fileId,
     staleTime: 1000 * 60,
   });
 }
 
-export function useFile(fileId: string | undefined) {
-  return useQuery({
-    queryKey: ['file', fileId],
-    queryFn: async (): Promise<File | null> => {
-      if (!fileId) return null;
-      await delay(200);
-      return mockFiles.find((f) => f.id === fileId) || null;
-    },
-    enabled: !!fileId,
-    staleTime: 1000 * 60,
+/**
+ * Extract unique tags from a list of files
+ */
+export function extractTagsFromFiles(files: File[]): string[] {
+  const tagSet = new Set<string>();
+  files.forEach((file) => {
+    file.tags.forEach((tag) => tagSet.add(tag));
+  });
+  return Array.from(tagSet).sort();
+}
+
+/**
+ * API response type for delete operation
+ */
+interface DeleteFileResponse {
+  success: boolean;
+  message: string;
+}
+
+/**
+ * Delete a file from the API
+ */
+async function deleteFile(fileId: string): Promise<DeleteFileResponse> {
+  const response = await fetch(`/api/files/${fileId}`, {
+    method: 'DELETE',
+    credentials: 'include', // Include cookies for auth
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    if (response.status === 403) {
+      throw new Error('You do not have permission to delete this file');
+    }
+    if (response.status === 404) {
+      throw new Error('File not found');
+    }
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.message || 'Failed to delete file');
+  }
+
+  return response.json();
+}
+
+/**
+ * Hook to delete a file
+ */
+export function useDeleteFile() {
+  return useMutation({
+    mutationFn: deleteFile,
   });
 }

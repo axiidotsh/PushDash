@@ -1,11 +1,19 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
-import { useFiles } from '@/hooks/use-files';
+import {
+  useFiles,
+  useDeleteFile,
+  extractTagsFromFiles,
+  createFilesQueryKey,
+} from '@/hooks/use-files';
 import { useFileFilters } from '@/hooks/use-file-filters';
-import { FileList, FilterBar } from '@/components/dashboard';
-import { getAllTags } from '@/lib/mock-data';
+import { FileList, FilterBar, DeleteFileDialog } from '@/components/dashboard';
+import type { File } from '@/types/file';
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashboardPage,
@@ -25,10 +33,53 @@ function DashboardPage() {
   } = useFileFilters();
 
   const { data, isLoading } = useFiles(queryParams);
-  const availableTags = getAllTags();
+  const queryClient = useQueryClient();
+  const deleteFileMutation = useDeleteFile();
+
+  const [fileToDelete, setFileToDelete] = useState<File | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const files = data?.files ?? [];
   const total = data?.total ?? 0;
+
+  // Derive available tags from the fetched files
+  const availableTags = useMemo(() => extractTagsFromFiles(files), [files]);
+
+  const handleDeleteClick = (file: File) => {
+    setFileToDelete(file);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!fileToDelete) return;
+
+    try {
+      await deleteFileMutation.mutateAsync(fileToDelete.id);
+
+      // Invalidate files query to refresh the list
+      queryClient.invalidateQueries({
+        queryKey: createFilesQueryKey(queryParams),
+      });
+
+      // Also invalidate the individual file query if it exists
+      queryClient.invalidateQueries({
+        queryKey: ['file', fileToDelete.id],
+      });
+
+      toast.success('File deleted successfully', {
+        description: `${fileToDelete.filename} has been deleted.`,
+      });
+
+      setIsDeleteDialogOpen(false);
+      setFileToDelete(null);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to delete file';
+      toast.error('Failed to delete file', {
+        description: errorMessage,
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -69,8 +120,16 @@ function DashboardPage() {
         onPreview={(file) => console.log('Preview:', file.filename)}
         onDownload={(file) => console.log('Download:', file.filename)}
         onShare={(file) => console.log('Share:', file.filename)}
-        onDelete={(file) => console.log('Delete:', file.filename)}
+        onDelete={handleDeleteClick}
         onClearFilters={clearFilters}
+      />
+
+      <DeleteFileDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        file={fileToDelete}
+        onConfirm={handleDeleteConfirm}
+        isLoading={deleteFileMutation.isPending}
       />
     </div>
   );
