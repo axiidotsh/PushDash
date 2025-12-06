@@ -23,7 +23,7 @@ pushdash login
 ### 3. Push your first file
 
 ```bash
-pushdash push ./file.pdf --tag "work"
+pushdash push /file.md --tag "work"
 ```
 
 ## Example
@@ -33,36 +33,16 @@ $ pushdash login
 
 ◐ Opening browser for authentication...
 
-✓ Logged in as dev@example.com
+✓ Logged in as dev@pushdash.dev
 
-$ pushdash push ./report.pdf --tag "work"
+$ pushdash push notes.md --tag "work"
 
-✓ Uploaded report.pdf (2.4 MB)
+✓ Uploaded notes.md
 
-→ https://pushdash.app/f/abc123
+→ https://pushdash.dev/dashboard/files/x7k9m2
 
-$
+
 ```
-
-## Why PushDash?
-
-A developer-first approach to file management. No bloated apps, no complicated workflows.
-
-### One Command Upload
-
-Push files instantly with a single CLI command. No browser needed.
-
-### Beautiful Dashboard
-
-Preview, search, and organize your files in a clean web interface.
-
-### Instant Sharing
-
-Generate shareable links with `--public` flag. Share in seconds.
-
-### Secure by Default
-
-Files are private unless explicitly shared. You control access.
 
 ## CLI Commands
 
@@ -83,11 +63,11 @@ pushdash logout                            # Clear credentials
 
 ## Tech Stack
 
-- **Frontend**: TanStack Start (React 19 SSR), Tailwind CSS v4, Radix UI
+- **Frontend**: TanStack Start (React 19), Tailwind CSS v4, Radix UI
 - **Backend**: Nitro, better-auth, Prisma
 - **Database**: Prisma Postgres
 - **Storage**: S3-compatible (Railway)
-- **CLI**: Commander.js, Axios
+- **CLI**: Commander.js, Chalk, Axios
 
 ## Development
 
