@@ -128,14 +128,23 @@ async function fetchFiles(params?: FileListParams): Promise<FileListResponse> {
     }
   }
 
-  // Map tags (backend only supports single tag)
+  // Map tags (backend supports multiple tags)
   if (params?.tags && params.tags.length > 0) {
-    searchParams.set('tag', params.tags[0]);
+    // Send all tags as comma-separated string
+    searchParams.set('tag', params.tags.join(','));
   }
 
   // Map visibility
   if (params?.visibility) {
     searchParams.set('isPublic', (params.visibility === 'PUBLIC').toString());
+  }
+
+  // Map date range
+  if (params?.dateFrom) {
+    searchParams.set('dateFrom', params.dateFrom.toISOString());
+  }
+  if (params?.dateTo) {
+    searchParams.set('dateTo', params.dateTo.toISOString());
   }
 
   const url = `/api/files${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;

@@ -32,11 +32,19 @@ export const fileQuerySchema = z.object({
     .default('createdAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
   search: z.string().max(100).optional(),
-  tag: z.string().max(50).optional(),
+  tag: z
+    .union([
+      z.string().max(50),
+      z.array(z.string().max(50)),
+      z.string().transform((val) => val.split(',')),
+    ])
+    .optional(),
   mimeType: z.string().max(100).optional(),
   isPublic: z
     .union([z.boolean(), z.string().transform((v) => v === 'true')])
     .optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
 });
 
 export type FileQueryInput = z.infer<typeof fileQuerySchema>;
