@@ -4,29 +4,29 @@
 
 ### Database Schema
 
-- [ ] Design database schema for users table
-- [ ] Design database schema for files table with metadata fields
-- [ ] Design database schema for shared links table
-- [ ] Add file metadata fields: filename, size, timestamp, tag, message, file type
-- [ ] Add public/private visibility field to files table
+- [x] Design database schema for users table
+- [x] Design database schema for files table with metadata fields
+- [x] Design database schema for shared links table
+- [x] Add file metadata fields: filename, size, timestamp, tag, message, file type
+- [x] Add public/private visibility field to files table
 - [ ] Create database migrations
 - [ ] Seed database with test data
 
 ### Authentication
 
-- [ ] Set up user registration flow
-- [ ] Set up user login flow
-- [ ] Set up user logout flow
-- [ ] Implement session management
-- [ ] Create protected route middleware
+- [x] Set up user registration flow (Better Auth)
+- [x] Set up user login flow (Better Auth + GitHub OAuth)
+- [x] Set up user logout flow (Better Auth)
+- [x] Implement session management (Better Auth)
+- [x] Create protected route middleware (api-helpers.ts)
 - [ ] Add authentication state to frontend
 
 ### Cloud Storage
 
-- [ ] Configure S3-compatible storage bucket
-- [ ] Set up storage credentials and environment variables
-- [ ] Create storage utility for file operations
-- [ ] Implement secure file URL generation
+- [ ] Configure S3-compatible storage bucket (need env vars)
+- [x] Set up storage credentials and environment variables (env.ts schema)
+- [x] Create storage utility for file operations (storage.ts)
+- [x] Implement secure file URL generation (signed URLs)
 
 ---
 
@@ -34,27 +34,27 @@
 
 ### File Upload API
 
-- [ ] Create file upload endpoint
-- [ ] Implement file size validation
-- [ ] Implement file type validation
-- [ ] Handle file metadata extraction
-- [ ] Store file content to cloud storage
-- [ ] Save file record to database
-- [ ] Return file URL after successful upload
+- [x] Create file upload endpoint (`/api/files/upload`)
+- [x] Implement file size validation (25MB limit)
+- [x] Implement file type validation (file-utils.ts)
+- [x] Handle file metadata extraction
+- [x] Store file content to cloud storage
+- [x] Save file record to database
+- [x] Return file URL after successful upload
 
 ### File Type Detection
 
-- [ ] Detect text file types (txt, md, json, code files)
-- [ ] Detect image file types (png, jpg, gif, webp)
-- [ ] Detect PDF file type
-- [ ] Store detected file type in database
+- [x] Detect text file types (txt, md, json, code files)
+- [x] Detect image file types (png, jpg, gif, webp)
+- [x] Detect PDF file type
+- [x] Store detected file type in database (mimeType field)
 
 ### Visibility Logic
 
-- [ ] Implement public file access
-- [ ] Implement private file access (owner only)
-- [ ] Implement shared file access (via link)
-- [ ] Create authorization checks for file retrieval
+- [x] Implement public file access
+- [x] Implement private file access (owner only)
+- [x] Implement shared file access (via link)
+- [x] Create authorization checks for file retrieval
 
 ---
 
@@ -75,7 +75,7 @@
 - [ ] Add file type filter component
 - [ ] Add tag filter component
 - [ ] Implement filter state management
-- [ ] Apply filters to file list query
+- [x] Apply filters to file list query (API supports filtering)
 
 ### Sorting
 
@@ -84,13 +84,13 @@
 - [ ] Add sort by size option
 - [ ] Add sort by date added option
 - [ ] Implement sort direction toggle (ascending/descending)
-- [ ] Apply sorting to file list query
+- [x] Apply sorting to file list query (API supports sorting)
 
 ### Search
 
 - [ ] Add search input component
 - [ ] Implement search by filename
-- [ ] Apply search filter to file list query
+- [x] Apply search filter to file list query (API supports search)
 - [ ] Add search results empty state
 
 ---
@@ -122,10 +122,10 @@
 
 ### Download
 
-- [ ] Create download endpoint
+- [x] Create download endpoint (`/api/files/$id/download`)
 - [ ] Add download button to file view
-- [ ] Implement secure file download
-- [ ] Set proper content-disposition headers
+- [x] Implement secure file download
+- [x] Set proper content-disposition headers
 
 ---
 
@@ -133,17 +133,17 @@
 
 ### Shareable Links
 
-- [ ] Create share link generation endpoint
-- [ ] Generate unique shareable URL for files
-- [ ] Store share link records in database
+- [x] Create share link generation endpoint (`/api/files/$id/share`)
+- [x] Generate unique shareable URL for files
+- [x] Store share link records in database
 - [ ] Create public file view page
 
 ### Access Control
 
-- [ ] Implement public link access (anyone with link)
-- [ ] Implement private link access (requires authentication)
-- [ ] Validate share link on file access
-- [ ] Handle expired or invalid share links
+- [x] Implement public link access (anyone with link)
+- [x] Implement private link access (requires authentication)
+- [x] Validate share link on file access
+- [x] Handle expired or invalid share links
 
 ### Share UI
 
@@ -159,40 +159,40 @@
 
 ### CLI Setup
 
-- [ ] Initialize CLI project structure
-- [ ] Set up CLI command framework
+- [x] Initialize CLI project structure
+- [x] Set up CLI command framework (Commander)
 - [ ] Configure CLI build and distribution
-- [ ] Create CLI help documentation
+- [x] Create CLI help documentation (basic)
 
 ### Authentication
 
-- [ ] Implement `login` command
-- [ ] Open browser for authentication
-- [ ] Handle authentication callback
-- [ ] Store authentication credentials locally
-- [ ] Implement `logout` command
-- [ ] Clear stored credentials on logout
+- [x] Implement `login` command
+- [x] Open browser for authentication
+- [x] Handle authentication callback (API: `/api/auth/cli/*`)
+- [x] Store authentication credentials locally (config-manager.ts)
+- [x] Implement `logout` command
+- [x] Clear stored credentials on logout
 
 ### File Upload Command
 
-- [ ] Implement `push` command for single file upload
-- [ ] Validate file path argument
-- [ ] Read file content from local filesystem
-- [ ] Upload file to server API
+- [x] Implement `push` command for single file upload
+- [x] Validate file path argument
+- [x] Read file content from local filesystem
+- [x] Upload file to server API
 
 ### Metadata Flags
 
-- [ ] Add `--tag` flag for file tagging
-- [ ] Add `--msg` flag for file message/description
-- [ ] Add `--public` flag for public visibility
-- [ ] Parse and validate flag values
+- [x] Add `--tag` flag for file tagging
+- [x] Add `--msg` flag for file message/description
+- [x] Add `--public` flag for public visibility
+- [x] Parse and validate flag values
 
 ### Output
 
 - [ ] Display upload progress indicator
-- [ ] Print file URL after successful upload
-- [ ] Display error messages on failure
-- [ ] Show success confirmation message
+- [x] Print file URL after successful upload
+- [x] Display error messages on failure
+- [x] Show success confirmation message
 
 ---
 
