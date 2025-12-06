@@ -122,7 +122,7 @@ export function SignInForm({ redirectTo }: SignInFormProps) {
           Don&apos;t have an account?{' '}
           <Link
             to="/sign-up"
-            search={signUpSearch}
+            search={{ redirect: redirectTo }}
             className="text-primary hover:underline"
           >
             Sign up
