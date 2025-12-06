@@ -35,7 +35,7 @@ const envSchema = z.object({
   S3_REGION: z.string().default('us-east-1'),
   S3_ACCESS_KEY_ID: z.string().min(1, 'S3_ACCESS_KEY_ID is required'),
   S3_SECRET_ACCESS_KEY: z.string().min(1, 'S3_SECRET_ACCESS_KEY is required'),
-  S3_ENDPOINT: z.string().url().optional(), // Optional custom endpoint for Railway/other S3-compatible services
+  S3_ENDPOINT: z.string().url().optional(),
 });
 
 /**
