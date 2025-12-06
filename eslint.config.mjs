@@ -1,4 +1,3 @@
-import eslint from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import prettier from 'eslint-config-prettier';
@@ -28,7 +27,6 @@ export default [
       '@typescript-eslint': tseslint,
     },
     rules: {
-      // Only the essentials - no annoying rules
       'no-console': 'off',
       'no-debugger': 'warn',
       '@typescript-eslint/no-unused-vars': [
@@ -39,5 +37,5 @@ export default [
       '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
-  prettier, // Disable ESLint rules that conflict with Prettier
+  prettier,
 ];
