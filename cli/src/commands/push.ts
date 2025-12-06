@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import chalk from 'chalk';
 import { resolve } from 'path';
 import { AuthManager } from '../lib/auth-manager.js';
 import { FileUploader } from '../lib/file-uploader.js';
@@ -14,10 +15,11 @@ export function createPushCommand(): Command {
     .option('--tag <tag>', 'Add a tag to the file')
     .option('--msg <message>', 'Add a message/description to the file')
     .option('--public', 'Make the file publicly accessible', false)
+    .option('--open', 'Open the file in browser after upload')
     .action(
       async (
         file: string,
-        options: { tag?: string; msg?: string; public: boolean }
+        options: { tag?: string; msg?: string; public: boolean; open?: boolean }
       ) => {
         try {
           const authManager = new AuthManager();
@@ -32,11 +34,21 @@ export function createPushCommand(): Command {
             isPublic: options.public,
           });
 
-          // Display file URL
-          Logger.log(result.file.url);
+          // Display results
+          Logger.log('');
+          Logger.log(chalk.green(result.file.url));
+          Logger.log('');
 
-          if (result.file.shareUrl) {
-            Logger.info(`Share: ${result.file.shareUrl}`);
+          // Show helpful commands
+          Logger.log(chalk.dim(`ID: ${result.file.id}`));
+          Logger.log(chalk.dim(`Open: pushdash open ${result.file.id}`));
+          Logger.log(chalk.dim(`Info: pushdash info ${result.file.id}`));
+
+          // Open in browser if requested
+          if (options.open) {
+            const open = (await import('open')).default;
+            await open(result.file.url);
+            Logger.info('Opened in browser');
           }
         } catch (error) {
           const errorMessage = ApiClient.handleError(error);

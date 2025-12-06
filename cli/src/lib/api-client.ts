@@ -10,6 +10,9 @@ import type {
   FileListResponse,
   FileDeleteResponse,
   FileListOptions,
+  FileDetailResponse,
+  ShareLinkResponse,
+  FileSharesResponse,
   PollResponse,
 } from '../types/index.js';
 
@@ -119,6 +122,43 @@ export class ApiClient {
       API_ENDPOINTS.FILE_DELETE(fileId)
     );
     return response.data;
+  }
+
+  async getFile(fileId: string): Promise<FileDetailResponse> {
+    const response = await this.client.get(API_ENDPOINTS.FILE_GET(fileId));
+    return response.data;
+  }
+
+  // Share methods
+  async createShareLink(fileId: string): Promise<ShareLinkResponse> {
+    const response = await this.client.post(
+      `${API_ENDPOINTS.FILE_GET(fileId)}/share`
+    );
+    return response.data;
+  }
+
+  async getFileShares(fileId: string): Promise<FileSharesResponse> {
+    const response = await this.client.get(
+      `${API_ENDPOINTS.FILE_GET(fileId)}/shares`
+    );
+    return response.data;
+  }
+
+  async addFileShares(
+    fileId: string,
+    emails: string[]
+  ): Promise<FileSharesResponse> {
+    const response = await this.client.post(
+      `${API_ENDPOINTS.FILE_GET(fileId)}/shares`,
+      { emails }
+    );
+    return response.data;
+  }
+
+  async removeFileShare(fileId: string, email: string): Promise<void> {
+    await this.client.delete(`${API_ENDPOINTS.FILE_GET(fileId)}/shares`, {
+      data: { email },
+    });
   }
 
   // Error handling helper
