@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { prisma } from '../../db';
-import { errorResponse } from '../../lib/api-helpers';
+import { errorResponse, getAuthenticatedUser } from '../../lib/api-helpers';
 import { getFile } from '../../lib/storage';
 
 export const Route = createFileRoute('/api/share/$token/download')({
@@ -9,8 +9,10 @@ export const Route = createFileRoute('/api/share/$token/download')({
       /**
        * GET /api/share/:token/download
        * Download a shared file via share token
+       * - Public files: Anyone can download
+       * - Private files: Only owner or users with email share access
        */
-      GET: async ({ params }) => {
+      GET: async ({ request, params }) => {
         try {
           const { token } = params;
 
@@ -18,7 +20,11 @@ export const Route = createFileRoute('/api/share/$token/download')({
           const shareLink = await prisma.shareLink.findUnique({
             where: { token },
             include: {
-              file: true,
+              file: {
+                include: {
+                  shares: true,
+                },
+              },
             },
           });
 
@@ -31,6 +37,33 @@ export const Route = createFileRoute('/api/share/$token/download')({
           }
 
           const file = shareLink.file;
+
+          // If file is private, check access permissions
+          if (!file.isPublic) {
+            const user = await getAuthenticatedUser(request);
+
+            if (!user) {
+              return errorResponse(
+                'Authentication required to download this file',
+                401,
+                'Unauthorized'
+              );
+            }
+
+            // Check if user is owner or has email access
+            const isOwner = user.id === file.userId;
+            const hasEmailAccess = file.shares.some(
+              (share) => share.email.toLowerCase() === user.email.toLowerCase()
+            );
+
+            if (!isOwner && !hasEmailAccess) {
+              return errorResponse(
+                'You do not have access to this file',
+                403,
+                'Forbidden'
+              );
+            }
+          }
 
           // Get file from storage
           const fileBuffer = await getFile(file.storageKey);

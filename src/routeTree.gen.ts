@@ -13,11 +13,13 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as ShareTokenRouteImport } from './routes/share.$token'
 import { Route as CliAuthRouteImport } from './routes/cli.auth'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiFilesIndexRouteImport } from './routes/api/files.index'
+import { Route as DashboardFilesIdRouteImport } from './routes/dashboard/files.$id'
 import { Route as ApiUserMeRouteImport } from './routes/api/user.me'
 import { Route as ApiShareTokenRouteImport } from './routes/api/share.$token'
 import { Route as ApiFilesUploadRouteImport } from './routes/api/files.upload'
@@ -29,6 +31,7 @@ import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session'
 import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth.logout'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as ApiShareTokenDownloadRouteImport } from './routes/api/share.$token.download'
+import { Route as ApiFilesIdSharesRouteImport } from './routes/api/files.$id.shares'
 import { Route as ApiFilesIdShareRouteImport } from './routes/api/files.$id.share'
 import { Route as ApiFilesIdDownloadRouteImport } from './routes/api/files.$id.download'
 import { Route as ApiAuthCliPollRouteImport } from './routes/api/auth.cli.poll'
@@ -54,6 +57,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CliAuthRoute = CliAuthRouteImport.update({
   id: '/cli/auth',
   path: '/cli/auth',
@@ -78,6 +86,11 @@ const ApiFilesIndexRoute = ApiFilesIndexRouteImport.update({
   id: '/api/files/',
   path: '/api/files/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardFilesIdRoute = DashboardFilesIdRouteImport.update({
+  id: '/files/$id',
+  path: '/files/$id',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ApiUserMeRoute = ApiUserMeRouteImport.update({
   id: '/api/user/me',
@@ -134,6 +147,11 @@ const ApiShareTokenDownloadRoute = ApiShareTokenDownloadRouteImport.update({
   path: '/download',
   getParentRoute: () => ApiShareTokenRoute,
 } as any)
+const ApiFilesIdSharesRoute = ApiFilesIdSharesRouteImport.update({
+  id: '/shares',
+  path: '/shares',
+  getParentRoute: () => ApiFilesIdRoute,
+} as any)
 const ApiFilesIdShareRoute = ApiFilesIdShareRouteImport.update({
   id: '/share',
   path: '/share',
@@ -167,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof AuthSignUpRoute
   '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
+  '/share/$token': typeof ShareTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -178,12 +197,14 @@ export interface FileRoutesByFullPath {
   '/api/files/upload': typeof ApiFilesUploadRoute
   '/api/share/$token': typeof ApiShareTokenRouteWithChildren
   '/api/user/me': typeof ApiUserMeRoute
+  '/dashboard/files/$id': typeof DashboardFilesIdRoute
   '/api/files': typeof ApiFilesIndexRoute
   '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
   '/api/auth/cli/init': typeof ApiAuthCliInitRoute
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesByTo {
@@ -192,6 +213,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof AuthSignUpRoute
   '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
+  '/share/$token': typeof ShareTokenRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -203,12 +225,14 @@ export interface FileRoutesByTo {
   '/api/files/upload': typeof ApiFilesUploadRoute
   '/api/share/$token': typeof ApiShareTokenRouteWithChildren
   '/api/user/me': typeof ApiUserMeRoute
+  '/dashboard/files/$id': typeof DashboardFilesIdRoute
   '/api/files': typeof ApiFilesIndexRoute
   '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
   '/api/auth/cli/init': typeof ApiAuthCliInitRoute
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRoutesById {
@@ -220,6 +244,7 @@ export interface FileRoutesById {
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/api/health': typeof ApiHealthRoute
   '/cli/auth': typeof CliAuthRoute
+  '/share/$token': typeof ShareTokenRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/auth/logout': typeof ApiAuthLogoutRoute
@@ -231,12 +256,14 @@ export interface FileRoutesById {
   '/api/files/upload': typeof ApiFilesUploadRoute
   '/api/share/$token': typeof ApiShareTokenRouteWithChildren
   '/api/user/me': typeof ApiUserMeRoute
+  '/dashboard/files/$id': typeof DashboardFilesIdRoute
   '/api/files/': typeof ApiFilesIndexRoute
   '/api/auth/cli/callback': typeof ApiAuthCliCallbackRoute
   '/api/auth/cli/init': typeof ApiAuthCliInitRoute
   '/api/auth/cli/poll': typeof ApiAuthCliPollRoute
   '/api/files/$id/download': typeof ApiFilesIdDownloadRoute
   '/api/files/$id/share': typeof ApiFilesIdShareRoute
+  '/api/files/$id/shares': typeof ApiFilesIdSharesRoute
   '/api/share/$token/download': typeof ApiShareTokenDownloadRoute
 }
 export interface FileRouteTypes {
@@ -248,6 +275,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/api/health'
     | '/cli/auth'
+    | '/share/$token'
     | '/dashboard/'
     | '/api/auth/$'
     | '/api/auth/logout'
@@ -259,12 +287,14 @@ export interface FileRouteTypes {
     | '/api/files/upload'
     | '/api/share/$token'
     | '/api/user/me'
+    | '/dashboard/files/$id'
     | '/api/files'
     | '/api/auth/cli/callback'
     | '/api/auth/cli/init'
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -273,6 +303,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/api/health'
     | '/cli/auth'
+    | '/share/$token'
     | '/dashboard'
     | '/api/auth/$'
     | '/api/auth/logout'
@@ -284,12 +315,14 @@ export interface FileRouteTypes {
     | '/api/files/upload'
     | '/api/share/$token'
     | '/api/user/me'
+    | '/dashboard/files/$id'
     | '/api/files'
     | '/api/auth/cli/callback'
     | '/api/auth/cli/init'
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   id:
     | '__root__'
@@ -300,6 +333,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-up'
     | '/api/health'
     | '/cli/auth'
+    | '/share/$token'
     | '/dashboard/'
     | '/api/auth/$'
     | '/api/auth/logout'
@@ -311,12 +345,14 @@ export interface FileRouteTypes {
     | '/api/files/upload'
     | '/api/share/$token'
     | '/api/user/me'
+    | '/dashboard/files/$id'
     | '/api/files/'
     | '/api/auth/cli/callback'
     | '/api/auth/cli/init'
     | '/api/auth/cli/poll'
     | '/api/files/$id/download'
     | '/api/files/$id/share'
+    | '/api/files/$id/shares'
     | '/api/share/$token/download'
   fileRoutesById: FileRoutesById
 }
@@ -326,6 +362,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   ApiHealthRoute: typeof ApiHealthRoute
   CliAuthRoute: typeof CliAuthRoute
+  ShareTokenRoute: typeof ShareTokenRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute
@@ -372,6 +409,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cli/auth': {
       id: '/cli/auth'
       path: '/cli/auth'
@@ -406,6 +450,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/files'
       preLoaderRoute: typeof ApiFilesIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/files/$id': {
+      id: '/dashboard/files/$id'
+      path: '/files/$id'
+      fullPath: '/dashboard/files/$id'
+      preLoaderRoute: typeof DashboardFilesIdRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/api/user/me': {
       id: '/api/user/me'
@@ -484,6 +535,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiShareTokenDownloadRouteImport
       parentRoute: typeof ApiShareTokenRoute
     }
+    '/api/files/$id/shares': {
+      id: '/api/files/$id/shares'
+      path: '/shares'
+      fullPath: '/api/files/$id/shares'
+      preLoaderRoute: typeof ApiFilesIdSharesRouteImport
+      parentRoute: typeof ApiFilesIdRoute
+    }
     '/api/files/$id/share': {
       id: '/api/files/$id/share'
       path: '/share'
@@ -536,10 +594,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardFilesIdRoute: typeof DashboardFilesIdRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardFilesIdRoute: DashboardFilesIdRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -549,11 +609,13 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 interface ApiFilesIdRouteChildren {
   ApiFilesIdDownloadRoute: typeof ApiFilesIdDownloadRoute
   ApiFilesIdShareRoute: typeof ApiFilesIdShareRoute
+  ApiFilesIdSharesRoute: typeof ApiFilesIdSharesRoute
 }
 
 const ApiFilesIdRouteChildren: ApiFilesIdRouteChildren = {
   ApiFilesIdDownloadRoute: ApiFilesIdDownloadRoute,
   ApiFilesIdShareRoute: ApiFilesIdShareRoute,
+  ApiFilesIdSharesRoute: ApiFilesIdSharesRoute,
 }
 
 const ApiFilesIdRouteWithChildren = ApiFilesIdRoute._addFileChildren(
@@ -578,6 +640,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   ApiHealthRoute: ApiHealthRoute,
   CliAuthRoute: CliAuthRoute,
+  ShareTokenRoute: ShareTokenRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
