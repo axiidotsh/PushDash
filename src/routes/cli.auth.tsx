@@ -115,7 +115,7 @@ function CliAuthPage() {
           </p>
           <div style={styles.buttons}>
             <a
-              href={`/login?redirect=/cli/auth?code=${code}`}
+              href={`/sign-in?redirect=/cli/auth?code=${code}`}
               style={styles.button}
             >
               Log in with Email

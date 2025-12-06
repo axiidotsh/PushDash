@@ -7,11 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Visibility {
-  PUBLIC
-  PRIVATE
-}
-
 model User {
   id            String    @id
   name          String
@@ -26,27 +21,6 @@ model User {
 
   @@unique([email])
   @@map("user")
-}
-
-model File {
-  id           String     @id @default(cuid())
-  filename     String
-  originalName String
-  size         Int
-  mimeType     String
-  visibility   Visibility @default(PRIVATE)
-  tags         String[]   @default([])
-  message      String?
-  s3Key        String
-  uploadedAt   DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  userId       String
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([visibility])
-  @@index([uploadedAt])
-  @@map("file")
 }
 
 model Session {
