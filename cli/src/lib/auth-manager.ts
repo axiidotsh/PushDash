@@ -39,14 +39,26 @@ export class AuthManager {
           await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
           const result = await this.apiClient.pollLogin(deviceCode);
 
-          // Login successful
-          pollSpinner.succeed('Authentication successful');
+          // Check if authentication is complete
+          if (result.status === 'pending') {
+            // Still waiting, continue polling
+            attempts++;
+            continue;
+          }
 
-          // Save token and user info
-          await this.saveLoginData(result);
+          if (result.status === 'completed' && result.token && result.user) {
+            // Login successful
+            pollSpinner.succeed('Authentication successful');
 
-          Logger.success(`Logged in as ${result.user.email}`);
-          return;
+            // Save token and user info
+            await this.saveLoginData(result as LoginResponse);
+
+            Logger.success(`Logged in as ${result.user.email}`);
+            return;
+          }
+
+          // Unknown status, continue polling
+          attempts++;
         } catch (error) {
           attempts++;
           if (attempts >= maxAttempts) {
