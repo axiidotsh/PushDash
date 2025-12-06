@@ -9,35 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root';
-import { Route as TodosRouteImport } from './routes/todos';
 import { Route as IndexRouteImport } from './routes/index';
-import { Route as ApiTodosRouteImport } from './routes/api/todos';
-import { Route as ApiTodosIdRouteImport } from './routes/api/todos.$id';
 import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth.sign-up';
 import { Route as ApiAuthSignOutRouteImport } from './routes/api/auth.sign-out';
 import { Route as ApiAuthSignInRouteImport } from './routes/api/auth.sign-in';
 import { Route as ApiAuthSessionRouteImport } from './routes/api/auth.session';
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$';
 
-const TodosRoute = TodosRouteImport.update({
-  id: '/todos',
-  path: '/todos',
-  getParentRoute: () => rootRouteImport,
-} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
-const ApiTodosRoute = ApiTodosRouteImport.update({
-  id: '/api/todos',
-  path: '/api/todos',
-  getParentRoute: () => rootRouteImport,
-} as any);
-const ApiTodosIdRoute = ApiTodosIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiTodosRoute,
 } as any);
 const ApiAuthSignUpRoute = ApiAuthSignUpRouteImport.update({
   id: '/api/auth/sign-up',
@@ -67,78 +49,58 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
-  '/todos': typeof TodosRoute;
-  '/api/todos': typeof ApiTodosRouteWithChildren;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/todos/$id': typeof ApiTodosIdRoute;
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
-  '/todos': typeof TodosRoute;
-  '/api/todos': typeof ApiTodosRouteWithChildren;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/todos/$id': typeof ApiTodosIdRoute;
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport;
   '/': typeof IndexRoute;
-  '/todos': typeof TodosRoute;
-  '/api/todos': typeof ApiTodosRouteWithChildren;
   '/api/auth/$': typeof ApiAuthSplatRoute;
   '/api/auth/session': typeof ApiAuthSessionRoute;
   '/api/auth/sign-in': typeof ApiAuthSignInRoute;
   '/api/auth/sign-out': typeof ApiAuthSignOutRoute;
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute;
-  '/api/todos/$id': typeof ApiTodosIdRoute;
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
     | '/'
-    | '/todos'
-    | '/api/todos'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
-    | '/api/auth/sign-up'
-    | '/api/todos/$id';
+    | '/api/auth/sign-up';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/'
-    | '/todos'
-    | '/api/todos'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
-    | '/api/auth/sign-up'
-    | '/api/todos/$id';
+    | '/api/auth/sign-up';
   id:
     | '__root__'
     | '/'
-    | '/todos'
-    | '/api/todos'
     | '/api/auth/$'
     | '/api/auth/session'
     | '/api/auth/sign-in'
     | '/api/auth/sign-out'
-    | '/api/auth/sign-up'
-    | '/api/todos/$id';
+    | '/api/auth/sign-up';
   fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  TodosRoute: typeof TodosRoute;
-  ApiTodosRoute: typeof ApiTodosRouteWithChildren;
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
   ApiAuthSessionRoute: typeof ApiAuthSessionRoute;
   ApiAuthSignInRoute: typeof ApiAuthSignInRoute;
@@ -148,33 +110,12 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/todos': {
-      id: '/todos';
-      path: '/todos';
-      fullPath: '/todos';
-      preLoaderRoute: typeof TodosRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
     '/': {
       id: '/';
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof IndexRouteImport;
       parentRoute: typeof rootRouteImport;
-    };
-    '/api/todos': {
-      id: '/api/todos';
-      path: '/api/todos';
-      fullPath: '/api/todos';
-      preLoaderRoute: typeof ApiTodosRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    '/api/todos/$id': {
-      id: '/api/todos/$id';
-      path: '/$id';
-      fullPath: '/api/todos/$id';
-      preLoaderRoute: typeof ApiTodosIdRouteImport;
-      parentRoute: typeof ApiTodosRoute;
     };
     '/api/auth/sign-up': {
       id: '/api/auth/sign-up';
@@ -214,22 +155,8 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface ApiTodosRouteChildren {
-  ApiTodosIdRoute: typeof ApiTodosIdRoute;
-}
-
-const ApiTodosRouteChildren: ApiTodosRouteChildren = {
-  ApiTodosIdRoute: ApiTodosIdRoute,
-};
-
-const ApiTodosRouteWithChildren = ApiTodosRoute._addFileChildren(
-  ApiTodosRouteChildren
-);
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  TodosRoute: TodosRoute,
-  ApiTodosRoute: ApiTodosRouteWithChildren,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAuthSessionRoute: ApiAuthSessionRoute,
   ApiAuthSignInRoute: ApiAuthSignInRoute,
