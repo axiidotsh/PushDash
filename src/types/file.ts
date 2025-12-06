@@ -54,6 +54,16 @@ export interface FileListResponse {
 }
 
 /**
+ * Sort field options for file list
+ */
+export type FileSortField = 'uploadedAt' | 'filename' | 'size';
+
+/**
+ * Sort order options
+ */
+export type FileSortOrder = 'asc' | 'desc';
+
+/**
  * File list query parameters
  */
 export interface FileListParams {
@@ -63,8 +73,10 @@ export interface FileListParams {
   visibility?: Visibility;
   fileType?: FileType;
   tags?: string[];
-  sortBy?: 'uploadedAt' | 'filename' | 'size';
-  sortOrder?: 'asc' | 'desc';
+  dateFrom?: Date;
+  dateTo?: Date;
+  sortBy?: FileSortField;
+  sortOrder?: FileSortOrder;
 }
 
 /**
