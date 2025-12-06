@@ -19,7 +19,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  redirectTo?: string;
+}
+
+export function SignUpForm({ redirectTo }: SignUpFormProps) {
   const navigate = useNavigate();
   const signUp = useSignUp();
 
@@ -38,7 +42,13 @@ export function SignUpForm() {
       toast.success('Account created successfully!', {
         description: 'Welcome to PushDash',
       });
-      navigate({ to: '/' });
+
+      // Redirect to specified URL or home
+      if (redirectTo) {
+        window.location.href = redirectTo;
+      } else {
+        navigate({ to: '/' });
+      }
     } catch (error) {
       toast.error('Sign up failed', {
         description:
@@ -46,6 +56,9 @@ export function SignUpForm() {
       });
     }
   };
+
+  // Build sign-in link with redirect if present
+  const signInSearch = redirectTo ? { redirect: redirectTo } : undefined;
 
   return (
     <Form {...form}>
@@ -130,7 +143,8 @@ export function SignUpForm() {
           Already have an account?{' '}
           <Link
             to="/sign-in"
-            className="hover:text-primary underline underline-offset-4"
+            search={signInSearch}
+            className="text-primary hover:underline"
           >
             Sign in
           </Link>
