@@ -12,7 +12,6 @@ import { createOpenCommand } from './commands/open.js';
 import { createInfoCommand } from './commands/info.js';
 import { createShareCommand } from './commands/share.js';
 
-// Get package.json version
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const packageJson = JSON.parse(
@@ -26,7 +25,6 @@ program
   .description('CLI tool to push files to PushDash cloud dashboard')
   .version(packageJson.version);
 
-// Register commands
 program.addCommand(createLoginCommand());
 program.addCommand(createLogoutCommand());
 program.addCommand(createPushCommand());
@@ -37,5 +35,4 @@ program.addCommand(createShareCommand());
 program.addCommand(createDeleteCommand());
 program.addCommand(createWhoamiCommand());
 
-// Parse arguments
 program.parse(process.argv);

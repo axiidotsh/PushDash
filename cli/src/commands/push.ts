@@ -41,8 +41,8 @@ export function createPushCommand(): Command {
 
           // Show helpful commands
           Logger.log(chalk.dim(`ID: ${result.file.id}`));
-          Logger.log(chalk.dim(`Open: pushdash open ${result.file.id}`));
-          Logger.log(chalk.dim(`Info: pushdash info ${result.file.id}`));
+          Logger.log(chalk.dim(`Open: pushdash open ${result.file.filename}`));
+          Logger.log(chalk.dim(`Info: pushdash info ${result.file.filename}`));
 
           // Open in browser if requested
           if (options.open) {

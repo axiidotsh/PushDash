@@ -28,7 +28,7 @@ interface SignInFormProps {
 export function SignInForm({ redirectTo }: SignInFormProps) {
   const navigate = useNavigate();
   const signIn = useSignIn();
-  const githubSignIn = useGitHubSignIn();
+  const githubSignIn = useGitHubSignIn(redirectTo);
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInInput>({

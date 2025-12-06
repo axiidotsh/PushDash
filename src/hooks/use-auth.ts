@@ -70,12 +70,12 @@ export function useSignUp() {
   });
 }
 
-export function useGitHubSignIn() {
+export function useGitHubSignIn(callbackURL?: string) {
   return useMutation({
     mutationFn: async () => {
       await authClient.signIn.social({
         provider: 'github',
-        callbackURL: '/dashboard',
+        callbackURL: callbackURL || '/dashboard',
       });
     },
   });
