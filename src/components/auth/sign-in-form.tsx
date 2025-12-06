@@ -89,12 +89,12 @@ export function SignInForm({ redirectTo }: SignInFormProps) {
           Continue with GitHub
         </Button>
 
-        <div className="relative">
+        <div className="relative mt-2 mb-4">
           <div className="absolute inset-0 flex items-center">
             <Separator className="w-full" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background text-muted-foreground px-2">
+            <span className="bg-card text-muted-foreground px-2">
               Or continue with email
             </span>
           </div>
