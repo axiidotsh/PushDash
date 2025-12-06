@@ -50,68 +50,91 @@ export function SignUpForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="John Doe" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid gap-2">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="John Doe"
+                    autoComplete="name"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="you@example.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    autoComplete="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormMessage />
-              <p className="text-muted-foreground text-xs">
-                Must be 8+ characters with uppercase, lowercase, and number
-              </p>
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                <p className="text-muted-foreground text-[0.8rem]">
+                  Must be 8+ characters with uppercase, lowercase, and number
+                </p>
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" disabled={signUp.isPending} className="w-full">
-          {signUp.isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating account...
-            </>
-          ) : (
-            'Create account'
-          )}
-        </Button>
+          <Button
+            type="submit"
+            disabled={signUp.isPending}
+            className="mt-2 w-full"
+          >
+            {signUp.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              'Create Account'
+            )}
+          </Button>
+        </div>
 
-        <p className="text-muted-foreground text-center text-sm">
+        <div className="text-center text-sm">
           Already have an account?{' '}
-          <Link to="/sign-in" className="text-primary hover:underline">
+          <Link
+            to="/sign-in"
+            className="hover:text-primary underline underline-offset-4"
+          >
             Sign in
           </Link>
-        </p>
+        </div>
       </form>
     </Form>
   );

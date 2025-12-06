@@ -13,15 +13,10 @@ function HomePage() {
   const { data: session, isLoading } = useSession();
 
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <div className="bg-background mx-auto flex min-h-screen max-w-6xl flex-col">
       <header className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
-          <div className="bg-primary flex h-9 w-9 items-center justify-center rounded-lg">
-            <Upload className="text-primary-foreground h-4 w-4" />
-          </div>
-          <span className="text-foreground text-lg font-semibold">
-            PushDash
-          </span>
+          <span className="text-foreground font-normal">PushDash</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -49,15 +44,9 @@ function HomePage() {
 
       <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         <div className="max-w-2xl">
-          <div className="bg-secondary text-secondary-foreground mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm">
-            <span className="bg-primary h-1.5 w-1.5 rounded-full" />
-            Developer-focused file sharing
-          </div>
-
           <h1 className="text-foreground mb-6 text-4xl font-bold tracking-tight md:text-5xl">
             Push files from terminal to cloud
           </h1>
-
           <p className="text-muted-foreground mb-10 text-lg">
             Upload files via CLI, manage them in a beautiful dashboard. Preview,
             search, and share with one command.
@@ -114,10 +103,6 @@ function HomePage() {
           </div>
         </div>
       </main>
-
-      <footer className="text-muted-foreground py-6 text-center text-sm">
-        Built for Prisma Hackathon
-      </footer>
     </div>
   );
 }
