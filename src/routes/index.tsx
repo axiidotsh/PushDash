@@ -160,13 +160,13 @@ function HomePage() {
               />
               <FeatureCard
                 icon={LayoutDashboard}
-                title="Beautiful Dashboard"
+                title="Clean Dashboard"
                 description="Preview, search, and organize your files in a clean web interface."
               />
               <FeatureCard
                 icon={Share2}
                 title="Instant Sharing"
-                description="Generate shareable links with --public flag. Share in seconds."
+                description="Generate publicly shareable links with --public flag. Share in seconds."
               />
               <FeatureCard
                 icon={Lock}
@@ -219,7 +219,7 @@ function HomePage() {
                 </div>
                 <div className="flex-1">
                   <CodeBlock
-                    code='pushdash push ./file.pdf --tag "work"'
+                    code='pushdash push notes.md --tag "work"'
                     label="Push your first file"
                   />
                 </div>
@@ -239,7 +239,6 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Footer */}
         <footer className="py-12">
           <div className="mx-auto max-w-6xl px-6">
             <div className="text-muted-foreground flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
