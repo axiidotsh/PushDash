@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -6,6 +5,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
 }
 
 model User {
@@ -18,9 +22,31 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  files         File[]
 
   @@unique([email])
   @@map("user")
+}
+
+model File {
+  id           String     @id @default(cuid())
+  filename     String
+  originalName String
+  size         Int
+  mimeType     String
+  visibility   Visibility @default(PRIVATE)
+  tags         String[]   @default([])
+  message      String?
+  s3Key        String
+  uploadedAt   DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([visibility])
+  @@index([uploadedAt])
+  @@map("file")
 }
 
 model Session {

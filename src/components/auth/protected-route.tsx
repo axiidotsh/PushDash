@@ -11,10 +11,6 @@ interface ProtectedRouteProps {
   fallbackPath?: string;
 }
 
-/**
- * Protected route wrapper component
- * Redirects unauthenticated users to sign-in page
- */
 export function ProtectedRoute({
   children,
   fallbackPath = '/sign-in',
@@ -28,19 +24,17 @@ export function ProtectedRoute({
     }
   }, [session, isLoading, navigate, fallbackPath]);
 
-  // Show loading state while checking session
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
+      <div className="bg-background flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
-          <p className="text-sm text-zinc-500">Loading...</p>
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+          <p className="text-muted-foreground text-sm">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Show nothing while redirecting
   if (!session || isError) {
     return null;
   }

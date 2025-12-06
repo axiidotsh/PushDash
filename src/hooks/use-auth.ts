@@ -8,15 +8,8 @@ import type {
   SignUpCredentials,
 } from '@/types/auth';
 
-/**
- * Query key for session data
- */
 export const sessionQueryKey = ['session'] as const;
 
-/**
- * Hook to get the current session
- * Returns the authenticated user and session data
- */
 export function useSession() {
   return useQuery({
     queryKey: sessionQueryKey,
@@ -27,15 +20,11 @@ export function useSession() {
       }
       return response.data as AuthSession;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
     retry: false,
   });
 }
 
-/**
- * Hook to sign in a user
- * Uses email/password authentication
- */
 export function useSignIn() {
   const queryClient = useQueryClient();
 
@@ -53,16 +42,11 @@ export function useSignIn() {
       return response.data;
     },
     onSuccess: () => {
-      // Invalidate session query to refetch user data
       queryClient.invalidateQueries({ queryKey: sessionQueryKey });
     },
   });
 }
 
-/**
- * Hook to sign up a new user
- * Creates account with email/password
- */
 export function useSignUp() {
   const queryClient = useQueryClient();
 
@@ -81,16 +65,11 @@ export function useSignUp() {
       return response.data;
     },
     onSuccess: () => {
-      // Invalidate session query to refetch user data
       queryClient.invalidateQueries({ queryKey: sessionQueryKey });
     },
   });
 }
 
-/**
- * Hook to sign out the current user
- * Clears session and invalidates cache
- */
 export function useSignOut() {
   const queryClient = useQueryClient();
 
@@ -105,9 +84,7 @@ export function useSignOut() {
       return response.data;
     },
     onSuccess: () => {
-      // Clear session from cache
       queryClient.setQueryData(sessionQueryKey, null);
-      // Invalidate all queries to ensure fresh state
       queryClient.invalidateQueries({ queryKey: sessionQueryKey });
     },
   });

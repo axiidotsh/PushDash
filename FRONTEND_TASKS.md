@@ -1,63 +1,63 @@
 # PushDash Frontend Task Checklist
 
-## Phase 1: Authentication UI
+## Phase 1: Authentication UI ✅
 
 ### Types & Data
 
-- [ ] Create `User` type
-- [ ] Create `Session` type
-- [ ] Add mock user data generator
+- [x] Create `User` type
+- [x] Create `Session` type
+- [x] Add mock user data generator
 
 ### React Query Hooks
 
-- [ ] Create `useSession` hook
-- [ ] Create `useSignIn` mutation hook
-- [ ] Create `useSignUp` mutation hook
-- [ ] Create `useSignOut` mutation hook
+- [x] Create `useSession` hook
+- [x] Create `useSignIn` mutation hook
+- [x] Create `useSignUp` mutation hook
+- [x] Create `useSignOut` mutation hook
 
 ### Components
 
-- [ ] Create sign-up form component
-- [ ] Create sign-in form component
-- [ ] Create sign-out button component
-- [ ] Create protected route wrapper component
-- [ ] Create auth layout component
+- [x] Create sign-up form component
+- [x] Create sign-in form component
+- [x] Create sign-out button component
+- [x] Create protected route wrapper component
+- [x] Create auth layout component
 
 ### Routes
 
-- [ ] Create sign-up page route
-- [ ] Create sign-in page route
-- [ ] Create auth route layout
+- [x] Create sign-up page route
+- [x] Create sign-in page route
+- [x] Create auth route layout
 
 ---
 
-## Phase 2: Dashboard Core Layout
+## Phase 2: Dashboard Core Layout ✅
 
 ### Types & Data
 
-- [ ] Create `File` type
-- [ ] Create `FileType` enum
-- [ ] Create `Visibility` enum
-- [ ] Add mock file data generator
+- [x] Create `File` type
+- [x] Create `FileType` enum
+- [x] Create `Visibility` enum
+- [x] Add mock file data generator
 
 ### React Query Hooks
 
-- [ ] Create `useFiles` hook
+- [x] Create `useFiles` hook
 
 ### Components
 
-- [ ] Create app shell layout
-- [ ] Create user menu dropdown
-- [ ] Create file list component
-- [ ] Create file card component
-- [ ] Create file row component
-- [ ] Create file list skeleton
-- [ ] Create empty state component
+- [x] Create app shell layout
+- [x] Create user menu dropdown
+- [x] Create file list component
+- [x] Create file card component
+- [x] Create file row component
+- [x] Create file list skeleton
+- [x] Create empty state component
 
 ### Routes
 
-- [ ] Create dashboard layout
-- [ ] Create dashboard index page
+- [x] Create dashboard layout
+- [x] Create dashboard index page
 
 ---
 
