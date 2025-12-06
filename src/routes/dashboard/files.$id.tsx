@@ -2,7 +2,7 @@
 
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import {
   ArrowLeft,
   Download,
@@ -21,15 +21,27 @@ import {
   X,
   Link2,
   Mail,
+  Calendar,
+  HardDrive,
+  Tag,
+  MoreHorizontal,
+  Loader2,
 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { FilePreview } from '@/components/file-preview';
 import { getFileType, formatFileSize } from '@/types/file';
 
 export const Route = createFileRoute('/dashboard/files/$id')({
@@ -74,6 +86,7 @@ function FileDetailPage() {
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [emailInput, setEmailInput] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [showSharePanel, setShowSharePanel] = useState(false);
 
   // Fetch file data
   const { data, isLoading, error } = useQuery({
@@ -177,7 +190,6 @@ function FileDetailPage() {
   const handleAddEmail = () => {
     if (!emailInput.trim()) return;
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emails = emailInput
       .split(',')
@@ -193,39 +205,40 @@ function FileDetailPage() {
     addShareMutation.mutate(emails);
   };
 
+  // Error state
   if (error) {
     return (
-      <div className="py-8">
+      <div className="mx-auto max-w-5xl px-4 py-8">
         <Link
           to="/dashboard"
-          className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-2 text-sm transition-colors"
+          className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to files
         </Link>
-        <Card className="border-destructive">
-          <CardContent className="py-8 text-center">
-            <p className="text-destructive">{error.message}</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-8 text-center dark:border-red-900/50 dark:bg-red-950/20">
+          <p className="text-red-600 dark:text-red-400">{error.message}</p>
+        </div>
       </div>
     );
   }
 
+  // Loading state
   if (isLoading || !file) {
     return (
-      <div className="py-8">
-        <Skeleton className="mb-6 h-5 w-32" />
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-8 w-64" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </CardContent>
-        </Card>
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <Skeleton className="mb-8 h-5 w-28" />
+        <div className="mb-6 flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-12 w-12 rounded-lg" />
+            <div>
+              <Skeleton className="mb-2 h-7 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-9 w-24" />
+        </div>
+        <Skeleton className="h-[400px] w-full rounded-lg" />
       </div>
     );
   }
@@ -234,104 +247,78 @@ function FileDetailPage() {
   const Icon = fileTypeIcons[fileType];
 
   return (
-    <div className="py-8">
+    <div className="mx-auto max-w-5xl px-4 py-8">
+      {/* Back link */}
       <Link
         to="/dashboard"
-        className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-2 text-sm transition-colors"
+        className="text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-2 text-sm transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to files
       </Link>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Main content */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader className="flex flex-row items-start justify-between">
-              <div className="flex items-start gap-4">
-                <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-lg">
-                  <Icon className="text-muted-foreground h-6 w-6" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl">{file.originalName}</CardTitle>
-                  <p className="text-muted-foreground mt-1 text-sm">
-                    {formatFileSize(file.size)} •{' '}
-                    {formatDistanceToNow(new Date(file.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                </div>
-              </div>
-              <Badge variant={file.isPublic ? 'default' : 'secondary'}>
-                {file.isPublic ? (
-                  <>
-                    <Globe className="mr-1 h-3 w-3" /> Public
-                  </>
-                ) : (
-                  <>
-                    <Lock className="mr-1 h-3 w-3" /> Private
-                  </>
-                )}
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              {/* Preview area */}
-              <div className="bg-muted/50 mb-6 flex min-h-[300px] items-center justify-center rounded-lg border">
-                {fileType === 'image' ? (
-                  <img
-                    src={file.downloadUrl}
-                    alt={file.originalName}
-                    className="max-h-[400px] max-w-full rounded object-contain"
-                  />
-                ) : (
-                  <div className="text-center">
-                    <Icon className="text-muted-foreground mx-auto mb-3 h-16 w-16" />
-                    <p className="text-muted-foreground text-sm">
-                      Preview not available
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-3"
-                      onClick={handleDownload}
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Download to view
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              {/* Message */}
-              {file.message && (
-                <div className="bg-muted/30 rounded-lg p-4">
-                  <h4 className="mb-2 text-sm font-medium">Description</h4>
-                  <p className="text-muted-foreground text-sm">
-                    {file.message}
-                  </p>
-                </div>
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-4">
+          <div className="bg-muted flex h-12 w-12 shrink-0 items-center justify-center rounded-lg">
+            <Icon className="text-foreground/70 h-6 w-6" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-xl font-semibold tracking-tight">
+              {file.originalName}
+            </h1>
+            <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+              <span className="inline-flex items-center gap-1.5">
+                <HardDrive className="h-3.5 w-3.5" />
+                {formatFileSize(file.size)}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5" />
+                {formatDistanceToNow(new Date(file.createdAt), {
+                  addSuffix: true,
+                })}
+              </span>
+              {file.isPublic ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                  <Globe className="h-3.5 w-3.5" />
+                  Public
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <Lock className="h-3.5 w-3.5" />
+                  Private
+                </span>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-4">
-          {/* Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button className="w-full justify-start" onClick={handleDownload}>
-                <Download className="mr-2 h-4 w-4" />
-                Download
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <Button onClick={handleDownload} size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Download
+          </Button>
+
+          {file.isOwner && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowSharePanel(!showSharePanel)}
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Share
+            </Button>
+          )}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="h-9 w-9">
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={handleCopyLink}
-              >
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleCopyLink}>
                 {copied ? (
                   <>
                     <Check className="mr-2 h-4 w-4" />
@@ -343,198 +330,214 @@ function FileDetailPage() {
                     Copy link
                   </>
                 )}
-              </Button>
-              {file.isOwner && (
-                <Button variant="destructive" className="w-full justify-start">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
+              </DropdownMenuItem>
+              {file.shareUrl && (
+                <DropdownMenuItem asChild>
+                  <a
+                    href={file.shareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Open share link
+                  </a>
+                </DropdownMenuItem>
               )}
-            </CardContent>
-          </Card>
+              {file.isOwner && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive focus:text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete file
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
 
-          {/* Sharing - Only for owners */}
-          {file.isOwner && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Share2 className="h-4 w-4" />
-                  Sharing
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Share Link */}
-                <div>
-                  <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
-                    Share Link
-                  </label>
-                  {file.shareUrl ? (
-                    <div className="flex gap-2">
-                      <Input
-                        value={file.shareUrl}
-                        readOnly
-                        className="text-xs"
-                      />
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        onClick={handleCopyShareLink}
-                      >
-                        {shareLinkCopied ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button size="icon" variant="outline" asChild>
-                        <a
-                          href={file.shareUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    </div>
+      {/* Share Panel */}
+      {showSharePanel && file.isOwner && (
+        <div className="mb-6 rounded-lg border p-4">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="font-medium">Share settings</h3>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setShowSharePanel(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Share Link Section */}
+          <div className="mb-4">
+            <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
+              Public Link
+            </label>
+            {file.shareUrl ? (
+              <div className="flex gap-2">
+                <Input
+                  value={file.shareUrl}
+                  readOnly
+                  className="font-mono text-xs"
+                />
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={handleCopyShareLink}
+                >
+                  {shareLinkCopied ? (
+                    <Check className="h-4 w-4" />
                   ) : (
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => createShareLinkMutation.mutate()}
-                      disabled={createShareLinkMutation.isPending}
-                    >
-                      <Link2 className="mr-2 h-4 w-4" />
-                      {createShareLinkMutation.isPending
-                        ? 'Creating...'
-                        : 'Generate share link'}
-                    </Button>
+                    <Copy className="h-4 w-4" />
                   )}
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => createShareLinkMutation.mutate()}
+                disabled={createShareLinkMutation.isPending}
+              >
+                {createShareLinkMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="mr-2 h-4 w-4" />
+                    Generate share link
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+
+          {/* Email Sharing - Only for private files */}
+          {!file.isPublic && (
+            <>
+              <Separator className="my-4" />
+              <div>
+                <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
+                  Share with specific people
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="Enter email addresses (comma separated)"
+                    value={emailInput}
+                    onChange={(e) => {
+                      setEmailInput(e.target.value);
+                      setEmailError('');
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddEmail();
+                      }
+                    }}
+                    className="text-sm"
+                  />
+                  <Button
+                    size="icon"
+                    onClick={handleAddEmail}
+                    disabled={addShareMutation.isPending || !emailInput.trim()}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                  </Button>
                 </div>
+                {emailError && (
+                  <p className="mt-1 text-xs text-red-500">{emailError}</p>
+                )}
 
-                <Separator />
-
-                {/* Email Sharing - Only for private files */}
-                {!file.isPublic && (
-                  <div>
-                    <label className="text-muted-foreground mb-2 block text-xs font-medium tracking-wide uppercase">
-                      Share with People
-                    </label>
-                    <p className="text-muted-foreground mb-3 text-xs">
-                      Add email addresses to give specific people access to this
-                      private file.
-                    </p>
-                    <div className="flex gap-2">
-                      <Input
-                        type="email"
-                        placeholder="Enter email address"
-                        value={emailInput}
-                        onChange={(e) => {
-                          setEmailInput(e.target.value);
-                          setEmailError('');
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleAddEmail();
-                          }
-                        }}
-                        className="text-sm"
-                      />
-                      <Button
-                        size="icon"
-                        onClick={handleAddEmail}
-                        disabled={
-                          addShareMutation.isPending || !emailInput.trim()
-                        }
+                {/* Shared emails list */}
+                {shares.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {shares.map((share) => (
+                      <div
+                        key={share.id}
+                        className="bg-muted/50 flex items-center justify-between rounded-md px-3 py-2"
                       >
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    {emailError && (
-                      <p className="text-destructive mt-1 text-xs">
-                        {emailError}
-                      </p>
-                    )}
-                    <p className="text-muted-foreground mt-1 text-xs">
-                      Tip: Separate multiple emails with commas
-                    </p>
-
-                    {/* List of shared emails */}
-                    {shares.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <div className="text-muted-foreground text-xs font-medium">
-                          Shared with {shares.length}{' '}
-                          {shares.length === 1 ? 'person' : 'people'}
+                        <div className="flex items-center gap-2">
+                          <Mail className="text-muted-foreground h-3.5 w-3.5" />
+                          <span className="text-sm">{share.email}</span>
                         </div>
-                        {shares.map((share) => (
-                          <div
-                            key={share.id}
-                            className="bg-muted/50 flex items-center justify-between rounded-md px-3 py-2"
-                          >
-                            <div className="flex items-center gap-2">
-                              <Mail className="text-muted-foreground h-3 w-3" />
-                              <span className="text-sm">{share.email}</span>
-                            </div>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-6 w-6"
-                              onClick={() =>
-                                removeShareMutation.mutate(share.email)
-                              }
-                              disabled={removeShareMutation.isPending}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        ))}
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7"
+                          onClick={() =>
+                            removeShareMutation.mutate(share.email)
+                          }
+                          disabled={removeShareMutation.isPending}
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
                       </div>
-                    )}
+                    ))}
                   </div>
                 )}
-
-                {file.isPublic && (
-                  <p className="text-muted-foreground text-xs">
-                    This file is public. Anyone with the share link can access
-                    it.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+            </>
           )}
+        </div>
+      )}
 
-          {/* Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Type</span>
-                <span>{file.mimeType}</span>
+      {/* File Preview */}
+      <div className="rounded-lg border">
+        <FilePreview
+          url={file.url}
+          downloadUrl={file.downloadUrl}
+          filename={file.originalName}
+          mimeType={file.mimeType}
+        />
+      </div>
+
+      {/* Details Section */}
+      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        {/* Description */}
+        {file.message && (
+          <div className="rounded-lg border p-4">
+            <h3 className="mb-2 text-sm font-medium">Description</h3>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {file.message}
+            </p>
+          </div>
+        )}
+
+        {/* File Info */}
+        <div className="rounded-lg border p-4">
+          <h3 className="mb-3 text-sm font-medium">File details</h3>
+          <dl className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Type</dt>
+              <dd className="font-mono text-xs">{file.mimeType}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Size</dt>
+              <dd>{formatFileSize(file.size)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">Uploaded</dt>
+              <dd>{format(new Date(file.createdAt), 'MMM d, yyyy')}</dd>
+            </div>
+            {file.tag && (
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Tag</dt>
+                <dd>
+                  <Badge variant="secondary" className="font-normal">
+                    <Tag className="mr-1 h-3 w-3" />
+                    {file.tag}
+                  </Badge>
+                </dd>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Size</span>
-                <span>{formatFileSize(file.size)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Uploaded</span>
-                <span>
-                  {new Date(file.createdAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
-              </div>
-              {file.tag && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tag</span>
-                  <Badge variant="outline">{file.tag}</Badge>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            )}
+          </dl>
         </div>
       </div>
     </div>

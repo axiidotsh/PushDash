@@ -39,8 +39,21 @@ function truncate(str: string, maxLen: number): string {
   return str.slice(0, maxLen - 1) + '…';
 }
 
+function padEnd(str: string, len: number): string {
+  // Handle strings with ANSI codes or emojis
+  const visibleLen = str.replace(/\x1b\[[0-9;]*m/g, '').length;
+  const padding = Math.max(0, len - visibleLen);
+  return str + ' '.repeat(padding);
+}
+
+function padStart(str: string, len: number): string {
+  const visibleLen = str.replace(/\x1b\[[0-9;]*m/g, '').length;
+  const padding = Math.max(0, len - visibleLen);
+  return ' '.repeat(padding) + str;
+}
+
 function getFileTypeIcon(mimeType: string): string {
-  if (mimeType.startsWith('image/')) return '🖼️ ';
+  if (mimeType.startsWith('image/')) return '🖼 ';
   if (mimeType.startsWith('text/')) return '📄';
   if (mimeType === 'application/pdf') return '📕';
   if (mimeType.startsWith('application/json')) return '📋';
@@ -49,10 +62,16 @@ function getFileTypeIcon(mimeType: string): string {
   return '📁';
 }
 
+interface DisplayOptions {
+  showId?: boolean;
+  showUrl?: boolean;
+  compact?: boolean;
+}
+
 function displayFiles(
   files: UploadedFile[],
   total: number,
-  options: { showId?: boolean; compact?: boolean }
+  options: DisplayOptions
 ): void {
   if (files.length === 0) {
     Logger.info('No files found.');
@@ -62,50 +81,91 @@ function displayFiles(
   }
 
   const showId = options.showId ?? false;
+  const showUrl = options.showUrl ?? false;
   const compact = options.compact ?? false;
 
   if (compact) {
-    // Compact view - just filenames
+    // Compact view - one file per line with essential info
     files.forEach((file) => {
       const visibility = file.isPublic
         ? chalk.green('public')
         : chalk.dim('private');
+      const id = showId ? chalk.dim(`[${file.id.slice(0, 8)}] `) : '';
       Logger.log(
-        `${file.filename} ${chalk.dim(`(${formatFileSize(file.size)})`)} ${visibility}`
+        `${id}${file.filename} ${chalk.dim(`(${formatFileSize(file.size)})`)} ${visibility}`
       );
+      if (showUrl) {
+        Logger.log(chalk.dim(`  → ${file.url}`));
+      }
     });
   } else {
-    // Table-like view
+    // Table view with proper alignment
     Logger.log('');
 
+    // Calculate column widths
+    const COL_ID = 12;
+    const COL_NAME = showId ? 30 : 35;
+    const COL_SIZE = 9;
+    const COL_VIS = 8;
+    const COL_DATE = 12;
+
     // Header
-    const header = showId
-      ? `${chalk.dim('ID'.padEnd(12))} ${chalk.bold('Filename'.padEnd(35))} ${chalk.dim('Size'.padStart(10))} ${chalk.dim('Type'.padEnd(6))} ${chalk.dim('Visibility'.padEnd(10))} ${chalk.dim('Uploaded')}`
-      : `${chalk.bold('Filename'.padEnd(40))} ${chalk.dim('Size'.padStart(10))} ${chalk.dim('Type'.padEnd(6))} ${chalk.dim('Visibility'.padEnd(10))} ${chalk.dim('Uploaded')}`;
+    let header = '';
+    if (showId) {
+      header += chalk.dim(padEnd('ID', COL_ID));
+    }
+    header += chalk.bold(padEnd('Filename', COL_NAME + 2)); // +2 for icon
+    header += chalk.dim(padStart('Size', COL_SIZE));
+    header += '  ';
+    header += chalk.dim(padEnd('Visibility', COL_VIS));
+    header += '  ';
+    header += chalk.dim('Uploaded');
 
     Logger.log(header);
-    Logger.log(chalk.dim('─'.repeat(showId ? 100 : 88)));
 
+    const lineWidth =
+      (showId ? COL_ID : 0) +
+      COL_NAME +
+      2 +
+      COL_SIZE +
+      2 +
+      COL_VIS +
+      2 +
+      COL_DATE;
+    Logger.log(chalk.dim('─'.repeat(lineWidth)));
+
+    // Rows
     files.forEach((file) => {
       const icon = getFileTypeIcon(file.type);
       const visibility = file.isPublic
-        ? chalk.green('public'.padEnd(10))
-        : chalk.dim('private'.padEnd(10));
+        ? chalk.green('public')
+        : chalk.dim('private');
       const date = formatDate(file.createdAt);
-      const size = formatFileSize(file.size).padStart(10);
-      const tag = file.tag ? chalk.cyan(` [${file.tag}]`) : '';
+      const size = formatFileSize(file.size);
+      const tag = file.tag ? chalk.cyan(` #${file.tag}`) : '';
+      const name = truncate(
+        file.filename,
+        COL_NAME - (file.tag ? file.tag.length + 2 : 0)
+      );
 
+      let row = '';
       if (showId) {
-        const shortId = file.id.slice(0, 10) + '..';
-        const name = truncate(file.filename, 32) + tag;
-        Logger.log(
-          `${chalk.dim(shortId.padEnd(12))} ${icon} ${name.padEnd(34)} ${size} ${visibility} ${chalk.dim(date)}`
-        );
-      } else {
-        const name = truncate(file.filename, 37) + tag;
-        Logger.log(
-          `${icon} ${name.padEnd(39)} ${size} ${visibility} ${chalk.dim(date)}`
-        );
+        row += chalk.dim(padEnd(file.id.slice(0, 10) + '..', COL_ID));
+      }
+      row += icon + ' ';
+      row += padEnd(name + tag, COL_NAME);
+      row += padStart(size, COL_SIZE);
+      row += '  ';
+      row += padEnd(visibility, COL_VIS);
+      row += '  ';
+      row += chalk.dim(date);
+
+      Logger.log(row);
+
+      // Show URL on next line if requested
+      if (showUrl) {
+        const indent = showId ? ' '.repeat(COL_ID) : '';
+        Logger.log(indent + chalk.dim(`   ↳ ${file.url}`));
       }
     });
 
@@ -115,9 +175,16 @@ function displayFiles(
   // Summary
   const showing =
     files.length < total
-      ? `Showing ${files.length} of ${total}`
-      : `${total} file${total !== 1 ? 's' : ''}`;
+      ? `Showing ${files.length} of ${total} files`
+      : `${total} file${total !== 1 ? 's' : ''} total`;
   Logger.log(chalk.dim(showing));
+
+  // Tip
+  if (!showId) {
+    Logger.log(
+      chalk.dim('Tip: Use --id to show file IDs for use with other commands')
+    );
+  }
 }
 
 export function createListCommand(): Command {
@@ -135,6 +202,7 @@ export function createListCommand(): Command {
     .option('--sort <field>', 'Sort by: createdAt, filename, size', 'createdAt')
     .option('--asc', 'Sort in ascending order (default is descending)')
     .option('--id', 'Show file IDs')
+    .option('-u, --url', 'Show file URLs')
     .option('-c, --compact', 'Compact output format')
     .action(
       async (options: {
@@ -147,6 +215,7 @@ export function createListCommand(): Command {
         sort: string;
         asc?: boolean;
         id?: boolean;
+        url?: boolean;
         compact?: boolean;
       }) => {
         try {
@@ -175,6 +244,7 @@ export function createListCommand(): Command {
 
           displayFiles(response.files, response.total, {
             showId: options.id,
+            showUrl: options.url,
             compact: options.compact,
           });
 

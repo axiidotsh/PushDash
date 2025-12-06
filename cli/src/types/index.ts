@@ -73,3 +73,40 @@ export interface FileListOptions {
   tag?: string;
   isPublic?: boolean;
 }
+
+export interface FileDetail extends UploadedFile {
+  originalName: string;
+  mimeType: string;
+  downloadUrl: string;
+  isOwner: boolean;
+  updatedAt: string;
+}
+
+export interface FileDetailResponse {
+  file: FileDetail;
+}
+
+export interface ShareLink {
+  id: string;
+  token: string;
+  url: string;
+  createdAt: string;
+}
+
+export interface ShareLinkResponse {
+  shareLink: ShareLink;
+  message: string;
+}
+
+export interface FileShare {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface FileSharesResponse {
+  shares: FileShare[];
+  total: number;
+  success?: boolean;
+  message?: string;
+}
