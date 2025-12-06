@@ -10,16 +10,21 @@ const envSchema = z.object({
     .min(1, 'DATABASE_URL is required')
     .url('DATABASE_URL must be a valid URL'),
 
-  // Node environment
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
 
-  // Optional: Better-auth secret (recommended for production)
-  BETTER_AUTH_SECRET: z.string().optional(),
-
-  // Optional: Base URL for the application
-  BETTER_AUTH_URL: z.string().url().optional(),
+  BETTER_AUTH_SECRET: z
+    .string()
+    .min(
+      32,
+      'BETTER_AUTH_SECRET is required and must be at least 32 characters long'
+    )
+    .regex(
+      /^[a-zA-Z0-9]+$/,
+      'BETTER_AUTH_SECRET must contain only letters and numbers'
+    ),
+  APP_URL: z.string().url('APP_URL must be a valid URL'),
 });
 
 /**
@@ -31,8 +36,8 @@ function validateEnv() {
     return envSchema.parse(process.env);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessages = error.errors.map(
-        (err) => `  - ${err.path.join('.')}: ${err.message}`
+      const errorMessages = error.issues.map(
+        (issue) => `  - ${issue.path.join('.')}: ${issue.message}`
       );
 
       console.error('❌ Invalid environment variables:');
@@ -47,13 +52,6 @@ function validateEnv() {
   }
 }
 
-/**
- * Validated environment variables
- * Type-safe access to environment variables throughout the application
- */
 export const env = validateEnv();
 
-/**
- * Type for environment variables
- */
 export type Env = z.infer<typeof envSchema>;
