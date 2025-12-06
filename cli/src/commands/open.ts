@@ -3,6 +3,7 @@ import open from 'open';
 import { AuthManager } from '../lib/auth-manager.js';
 import { ApiClient } from '../lib/api-client.js';
 import { Logger } from '../lib/logger.js';
+import { resolveFile } from '../lib/file-resolver.js';
 import { API_BASE_URL } from '../lib/constants.js';
 
 export function createOpenCommand(): Command {
@@ -10,13 +11,13 @@ export function createOpenCommand(): Command {
 
   command
     .description('Open a file in your browser')
-    .argument('<file-id>', 'ID of the file to open')
+    .argument('<file>', 'File ID or filename to open')
     .option('-d, --download', 'Open the download URL directly')
     .option('-s, --share', 'Open the share link (if available)')
     .option('--no-browser', 'Just print the URL without opening')
     .action(
       async (
-        fileId: string,
+        fileIdentifier: string,
         options: { download?: boolean; share?: boolean; browser: boolean }
       ) => {
         try {
@@ -25,41 +26,38 @@ export function createOpenCommand(): Command {
 
           const apiClient = new ApiClient();
 
+          // Resolve file by ID or filename
+          const { id: fileId, file } = await resolveFile(
+            apiClient,
+            fileIdentifier,
+            'Looking up file...'
+          );
+
           // Determine which URL to open
           let url: string;
           let urlType: string;
 
           if (options.download) {
-            // Direct download URL
-            url = `${API_BASE_URL}/api/files/${fileId}/download`;
+            url =
+              file.downloadUrl ||
+              `${API_BASE_URL}/api/files/${fileId}/download`;
             urlType = 'download';
           } else if (options.share) {
-            // Need to fetch file to get share URL
-            const spinner = Logger.spinner('Fetching file info...');
-            try {
-              const response = await apiClient.getFile(fileId);
-              spinner.stop();
-
-              if (response.file.shareUrl) {
-                url = response.file.shareUrl;
-                urlType = 'share';
-              } else {
-                Logger.warn('No share link exists for this file.');
-                Logger.info('Create one with: pushdash share ' + fileId);
-                process.exit(1);
-              }
-            } catch (error) {
-              spinner.fail('Failed to fetch file');
-              throw error;
+            if (file.shareUrl) {
+              url = file.shareUrl;
+              urlType = 'share link';
+            } else {
+              Logger.warn('No share link exists for this file.');
+              Logger.info(`Create one with: pushdash share ${fileId}`);
+              process.exit(1);
             }
           } else {
-            // Default: open the file detail page
-            url = `${API_BASE_URL}/dashboard/files/${fileId}`;
+            url = file.url || `${API_BASE_URL}/dashboard/files/${fileId}`;
             urlType = 'file page';
           }
 
           if (options.browser) {
-            const spinner = Logger.spinner(`Opening ${urlType} in browser...`);
+            const spinner = Logger.spinner(`Opening ${urlType}...`);
             await open(url);
             spinner.succeed(`Opened ${urlType} in browser`);
           } else {

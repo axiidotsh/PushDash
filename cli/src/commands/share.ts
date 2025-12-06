@@ -3,21 +3,30 @@ import chalk from 'chalk';
 import { AuthManager } from '../lib/auth-manager.js';
 import { ApiClient } from '../lib/api-client.js';
 import { Logger } from '../lib/logger.js';
+import { resolveFile } from '../lib/file-resolver.js';
 
 export function createShareCommand(): Command {
   const command = new Command('share');
 
   command
     .description('Manage file sharing')
-    .argument('<file-id>', 'ID of the file to share');
+    .argument('<file>', 'File ID or filename to share');
 
   // Default action: create/show share link
-  command.action(async (fileId: string) => {
+  command.action(async (fileIdentifier: string) => {
     try {
       const authManager = new AuthManager();
       await authManager.requireAuth();
 
       const apiClient = new ApiClient();
+
+      // Resolve file by ID or filename
+      const { id: fileId } = await resolveFile(
+        apiClient,
+        fileIdentifier,
+        'Looking up file...'
+      );
+
       const spinner = Logger.spinner('Creating share link...');
 
       try {
@@ -45,15 +54,22 @@ export function createShareCommand(): Command {
     .alias('ls')
     .description('List people this file is shared with')
     .action(async () => {
-      const fileId = command.args[0];
+      const fileIdentifier = command.args[0];
 
       try {
         const authManager = new AuthManager();
         await authManager.requireAuth();
 
         const apiClient = new ApiClient();
-        const spinner = Logger.spinner('Fetching shares...');
 
+        // Resolve file by ID or filename
+        const { id: fileId } = await resolveFile(
+          apiClient,
+          fileIdentifier,
+          'Looking up file...'
+        );
+
+        const spinner = Logger.spinner('Fetching shares...');
         const response = await apiClient.getFileShares(fileId);
         spinner.stop();
 
@@ -96,13 +112,20 @@ export function createShareCommand(): Command {
     .command('add <emails...>')
     .description('Share file with email address(es)')
     .action(async (emails: string[]) => {
-      const fileId = command.args[0];
+      const fileIdentifier = command.args[0];
 
       try {
         const authManager = new AuthManager();
         await authManager.requireAuth();
 
         const apiClient = new ApiClient();
+
+        // Resolve file by ID or filename
+        const { id: fileId } = await resolveFile(
+          apiClient,
+          fileIdentifier,
+          'Looking up file...'
+        );
 
         // Validate emails
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -145,13 +168,21 @@ export function createShareCommand(): Command {
     .alias('rm')
     .description('Remove access for an email address')
     .action(async (email: string) => {
-      const fileId = command.args[0];
+      const fileIdentifier = command.args[0];
 
       try {
         const authManager = new AuthManager();
         await authManager.requireAuth();
 
         const apiClient = new ApiClient();
+
+        // Resolve file by ID or filename
+        const { id: fileId } = await resolveFile(
+          apiClient,
+          fileIdentifier,
+          'Looking up file...'
+        );
+
         const spinner = Logger.spinner(`Removing access for ${email}...`);
 
         try {
