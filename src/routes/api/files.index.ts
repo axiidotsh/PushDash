@@ -51,6 +51,8 @@ export const Route = createFileRoute('/api/files/')({
             tag,
             mimeType,
             isPublic,
+            dateFrom,
+            dateTo,
           } = parsed.data;
 
           // Build where clause
@@ -68,7 +70,17 @@ export const Route = createFileRoute('/api/files/')({
           }
 
           if (tag) {
-            where.tag = tag;
+            // Handle both single tag and multiple tags
+            const tags = Array.isArray(tag) ? tag : [tag];
+            if (tags.length === 1) {
+              where.tag = tags[0];
+            } else if (tags.length > 1) {
+              // Use OR condition for multiple tags
+              where.OR = [
+                ...(where.OR || []),
+                ...tags.map((t) => ({ tag: t })),
+              ];
+            }
           }
 
           if (mimeType) {
@@ -77,6 +89,16 @@ export const Route = createFileRoute('/api/files/')({
 
           if (isPublic !== undefined) {
             where.isPublic = isPublic;
+          }
+
+          if (dateFrom || dateTo) {
+            where.createdAt = {};
+            if (dateFrom) {
+              where.createdAt.gte = dateFrom;
+            }
+            if (dateTo) {
+              where.createdAt.lte = dateTo;
+            }
           }
 
           // Get total count

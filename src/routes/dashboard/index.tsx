@@ -81,6 +81,32 @@ function DashboardPage() {
     }
   };
 
+  const handleDownload = async (file: File) => {
+    try {
+      // Construct download URL
+      const downloadUrl = `/api/files/${file.id}/download`;
+
+      // Create temporary anchor element to trigger download
+      const anchor = document.createElement('a');
+      anchor.href = downloadUrl;
+      anchor.download = file.filename;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
+      toast.success('Download started', {
+        description: `Downloading ${file.filename}`,
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to download file';
+      toast.error('Failed to download file', {
+        description: errorMessage,
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
@@ -118,7 +144,7 @@ function DashboardPage() {
         isEmpty={!isLoading && !hasActiveFilters && total === 0}
         searchQuery={filters.search}
         onPreview={(file) => console.log('Preview:', file.filename)}
-        onDownload={(file) => console.log('Download:', file.filename)}
+        onDownload={handleDownload}
         onShare={(file) => console.log('Share:', file.filename)}
         onDelete={handleDeleteClick}
         onClearFilters={clearFilters}
