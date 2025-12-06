@@ -1,15 +1,16 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { authClient } from '../../auth-client';
 
 import { AppShell } from '@/components/dashboard/app-shell';
+import { getServerSession } from '@/lib/server-auth';
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
-    // Check if user is authenticated
-    const response = await authClient.getSession();
+    // Check if user is authenticated using server function
+    // This avoids the SSR issue where auth client would make HTTP requests to itself
+    const session = await getServerSession();
 
     // If not authenticated, redirect to sign-in
-    if (!response.data?.session) {
+    if (!session?.user) {
       throw redirect({
         to: '/sign-in',
       });
