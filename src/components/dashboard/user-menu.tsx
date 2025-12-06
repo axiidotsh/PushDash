@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from '@tanstack/react-router';
-import { User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { User, LogOut, ChevronDown } from 'lucide-react';
 
 import { useSession, useSignOut } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -79,12 +79,6 @@ export function UserMenu() {
             <Link to="/dashboard">
               <User className="mr-2 h-4 w-4" />
               Dashboard
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link to="/dashboard/settings">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>

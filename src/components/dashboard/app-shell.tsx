@@ -1,7 +1,7 @@
 'use client';
 
 import { Link } from '@tanstack/react-router';
-import { Upload, LayoutDashboard, Settings } from 'lucide-react';
+import { Upload, LayoutDashboard } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { UserMenu } from './user-menu';
@@ -28,9 +28,6 @@ export function AppShell({ children }: AppShellProps) {
             <NavLink to="/dashboard" icon={LayoutDashboard}>
               Dashboard
             </NavLink>
-            <NavLink to="/dashboard/settings" icon={Settings}>
-              Settings
-            </NavLink>
           </nav>
 
           <UserMenu />
@@ -43,7 +40,7 @@ export function AppShell({ children }: AppShellProps) {
 }
 
 interface NavLinkProps {
-  to: '/dashboard' | '/dashboard/settings';
+  to: '/dashboard';
   icon: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
 }
