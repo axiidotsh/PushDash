@@ -70,6 +70,17 @@ export function useSignUp() {
   });
 }
 
+export function useGitHubSignIn() {
+  return useMutation({
+    mutationFn: async () => {
+      await authClient.signIn.social({
+        provider: 'github',
+        callbackURL: '/dashboard',
+      });
+    },
+  });
+}
+
 export function useSignOut() {
   const queryClient = useQueryClient();
 
