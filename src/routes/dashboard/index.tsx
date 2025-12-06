@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -36,6 +36,7 @@ function DashboardPage() {
   const queryClient = useQueryClient();
   const deleteFileMutation = useDeleteFile();
 
+  const navigate = useNavigate();
   const [fileToDelete, setFileToDelete] = useState<File | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -143,9 +144,10 @@ function DashboardPage() {
         isLoading={isLoading}
         isEmpty={!isLoading && !hasActiveFilters && total === 0}
         searchQuery={filters.search}
-        onPreview={(file) => console.log('Preview:', file.filename)}
+        onPreview={(file) =>
+          navigate({ to: '/dashboard/files/$id', params: { id: file.id } })
+        }
         onDownload={handleDownload}
-        onShare={(file) => console.log('Share:', file.filename)}
         onDelete={handleDeleteClick}
         onClearFilters={clearFilters}
       />

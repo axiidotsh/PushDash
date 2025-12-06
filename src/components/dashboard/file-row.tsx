@@ -10,7 +10,6 @@ import {
   Globe,
   MoreHorizontal,
   Download,
-  Share2,
   Trash2,
 } from 'lucide-react';
 
@@ -30,7 +29,6 @@ interface FileRowProps {
   file: File;
   onPreview?: (file: File) => void;
   onDownload?: (file: File) => void;
-  onShare?: (file: File) => void;
   onDelete?: (file: File) => void;
 }
 
@@ -46,7 +44,6 @@ export function FileRow({
   file,
   onPreview,
   onDownload,
-  onShare,
   onDelete,
 }: FileRowProps) {
   const fileType = getFileType(file.mimeType);
@@ -128,13 +125,6 @@ export function FileRow({
           >
             <Download className="mr-2 h-4 w-4" />
             Download
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => onShare?.(file)}
-            className="cursor-pointer"
-          >
-            <Share2 className="mr-2 h-4 w-4" />
-            Share
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

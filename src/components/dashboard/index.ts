@@ -5,3 +5,4 @@ export { FileListSkeleton } from './file-list-skeleton';
 export { EmptyFiles } from './empty-files';
 export { FilterBar } from './filter-bar';
 export { DeleteFileDialog } from './delete-file-dialog';
+export { ShareDialog } from './share-dialog';
