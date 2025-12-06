@@ -23,7 +23,7 @@ pushdash login
 ### 3. Push your first file
 
 ```bash
-pushdash push /file.md --tag "work"
+pushdash push /file.md --tag="work"
 ```
 
 ## Example
